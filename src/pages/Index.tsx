@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Star, Wifi, Waves, UtensilsCrossed, Dumbbell, Sparkles, ArrowRight } from "lucide-react";
 import heroImg from "@/assets/hero-hotel.jpg";
 import { rooms } from "@/data/rooms";
+import { Footer } from "@/components/Footer";
 
 const amenities = [
   { icon: Wifi, label: "High-Speed Wi-Fi" },
