@@ -66,8 +66,33 @@ export default function AdminPayments() {
   return (
     <AdminLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-heading text-3xl font-bold text-foreground mb-1">Payments</h1>
-        <p className="text-muted-foreground text-sm mb-8">Transaction history and revenue</p>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="font-heading text-3xl font-bold text-foreground mb-1">Payments</h1>
+            <p className="text-muted-foreground text-sm">Transaction history and revenue</p>
+          </div>
+          {bookings.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csvData = bookings.map((b: any) => ({
+                  Guest: b.guest_name,
+                  Room: b.room_name,
+                  "Check-in": b.check_in,
+                  "Check-out": b.check_out,
+                  Status: b.status,
+                  "Payment Status": b.payment_status,
+                  Amount: Number(b.total_price),
+                  "Booked On": format(parseISO(b.created_at), "yyyy-MM-dd"),
+                }));
+                exportToCSV(csvData, `payments-${format(new Date(), "yyyy-MM-dd")}`);
+              }}
+            >
+              <Download className="h-4 w-4 mr-2" /> Export CSV
+            </Button>
+          )}
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
