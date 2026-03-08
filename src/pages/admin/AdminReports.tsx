@@ -310,7 +310,7 @@ export default function AdminReports() {
                   <BarChart data={months12.map((m, i) => ({ month: format(m, "MMM yy"), revenue: monthlyRevenue[i]?.revenue || 0, payroll: payrollMonthly[i]?.payroll || 0 }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => formatINRShort(v)} />
                     <Tooltip contentStyle={chartStyle} />
                     <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Revenue" />
                     <Bar dataKey="payroll" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} name="Payroll" />
