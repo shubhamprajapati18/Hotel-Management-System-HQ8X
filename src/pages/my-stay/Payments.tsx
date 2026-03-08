@@ -34,7 +34,7 @@ export default function Payments() {
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 md:p-6 mb-6 flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground tracking-wider uppercase">Total Spent</p>
-            <p className="font-heading text-2xl md:text-3xl font-semibold text-primary mt-1">${total.toLocaleString()}</p>
+            <p className="font-heading text-2xl md:text-3xl font-semibold text-primary mt-1">₹{total.toLocaleString()}</p>
           </div>
           <CreditCard className="h-8 w-8 text-primary/30" />
         </div>
