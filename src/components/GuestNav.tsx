@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, LogOut, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -15,16 +16,17 @@ const navItems = [
   { label: "Contact", path: "/contact" },
 ];
 
-// Pages that have a dark hero image where nav text should be white initially
 const darkHeroPages = ["/"];
 
 export function GuestNav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, isAdmin, signOut } = useAuth();
 
   const hasDarkHero = darkHeroPages.includes(location.pathname);
-  // On inner pages (light bg), always show "solid" nav style
   const solid = scrolled || !hasDarkHero;
 
   useEffect(() => {
@@ -32,6 +34,21 @@ export function GuestNav() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Close profile dropdown on route change
+  useEffect(() => {
+    setProfileOpen(false);
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  const initials = profile
+    ? `${(profile.first_name || "")[0] || ""}${(profile.last_name || "")[0] || ""}`.toUpperCase() || "U"
+    : "U";
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <nav
@@ -43,7 +60,6 @@ export function GuestNav() {
       )}
     >
       <div className="container mx-auto flex items-center justify-between px-5 md:px-6 lg:px-10">
-        {/* Logo */}
         <Link to="/" className="flex items-center">
           <span className={cn(
             "font-heading text-xl md:text-2xl font-semibold tracking-wide transition-colors duration-500",
@@ -53,7 +69,6 @@ export function GuestNav() {
           </span>
         </Link>
 
-        {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-8 xl:gap-10">
           {navItems.map((item) => (
             <Link
@@ -73,27 +88,89 @@ export function GuestNav() {
 
         {/* Right Actions */}
         <div className="hidden lg:flex items-center gap-3">
-          <Link to="/my-stay">
-            <Button variant="ghost" size="sm" className={cn(
-              "text-xs tracking-wider uppercase transition-colors duration-300",
-              solid ? "text-foreground/60 hover:text-primary" : "text-white/60 hover:text-white hover:bg-white/10"
-            )}>
-              <User className="h-3.5 w-3.5 mr-1.5" />
-              My Stay
-            </Button>
-          </Link>
-          <Link to="/login">
-            <Button
-              variant={solid ? "luxury" : "outline"}
-              size="sm"
-              className={cn(
-                "text-xs tracking-wider uppercase px-5 transition-all duration-300",
-                !solid && "border-white/30 text-white hover:bg-white/10 hover:border-white/50"
-              )}
-            >
-              Sign In
-            </Button>
-          </Link>
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors duration-300",
+                  solid ? "hover:bg-secondary" : "hover:bg-white/10"
+                )}
+              >
+                <div className="h-8 w-8 rounded-full bg-primary/15 flex items-center justify-center text-primary text-xs font-heading font-semibold">
+                  {initials}
+                </div>
+                <span className={cn(
+                  "text-xs font-medium tracking-wider",
+                  solid ? "text-foreground/70" : "text-white/70"
+                )}>
+                  {profile?.first_name || "Account"}
+                </span>
+                <ChevronDown className={cn(
+                  "h-3 w-3 transition-transform",
+                  profileOpen && "rotate-180",
+                  solid ? "text-foreground/40" : "text-white/40"
+                )} />
+              </button>
+
+              <AnimatePresence>
+                {profileOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -4, scale: 0.97 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 w-52 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50"
+                  >
+                    <div className="px-4 py-3 border-b border-border">
+                      <p className="text-sm font-medium text-foreground">{profile?.first_name} {profile?.last_name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                    <div className="py-1.5">
+                      <Link
+                        to="/my-stay"
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                      >
+                        <User className="h-3.5 w-3.5" />
+                        My Stay
+                      </Link>
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-primary hover:bg-secondary/60 transition-colors"
+                        >
+                          <User className="h-3.5 w-3.5" />
+                          Admin Panel
+                        </Link>
+                      )}
+                      <button
+                        onClick={handleSignOut}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-destructive hover:bg-secondary/60 transition-colors w-full text-left"
+                      >
+                        <LogOut className="h-3.5 w-3.5" />
+                        Sign Out
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button
+                  variant={solid ? "luxury" : "outline"}
+                  size="sm"
+                  className={cn(
+                    "text-xs tracking-wider uppercase px-5 transition-all duration-300",
+                    !solid && "border-white/30 text-white hover:bg-white/10 hover:border-white/50"
+                  )}
+                >
+                  Sign In
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -130,14 +207,31 @@ export function GuestNav() {
                 </Link>
               ))}
               <div className="h-px bg-border my-1" />
-              <div className="flex gap-3">
-                <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1">
+              {user ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/15 flex items-center justify-center text-primary text-xs font-heading font-semibold">
+                      {initials}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{profile?.first_name} {profile?.last_name}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Link to="/my-stay" onClick={() => setMobileOpen(false)} className="flex-1">
+                      <Button variant="gold-outline" className="w-full text-xs tracking-wider uppercase">My Stay</Button>
+                    </Link>
+                    <Button variant="ghost" onClick={handleSignOut} className="text-xs text-destructive">
+                      <LogOut className="h-3.5 w-3.5 mr-1" /> Sign Out
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Link to="/login" onClick={() => setMobileOpen(false)}>
                   <Button variant="luxury" className="w-full text-xs tracking-wider uppercase">Sign In</Button>
                 </Link>
-                <Link to="/my-stay" onClick={() => setMobileOpen(false)} className="flex-1">
-                  <Button variant="ghost" className="w-full text-xs tracking-wider uppercase text-foreground/60">My Stay</Button>
-                </Link>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
