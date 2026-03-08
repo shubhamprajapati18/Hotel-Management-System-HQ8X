@@ -84,7 +84,7 @@ export function GuestNav() {
           </Link>
           <Link to="/login">
             <Button
-              variant={solid ? "gold-outline" : "outline"}
+              variant={solid ? "luxury" : "outline"}
               size="sm"
               className={cn(
                 "text-xs tracking-wider uppercase px-5 transition-all duration-300",
