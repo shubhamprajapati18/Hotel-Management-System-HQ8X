@@ -15,6 +15,7 @@ const navItems = [
   { label: "Service Requests", icon: ConciergeBell, path: "/admin/service-requests" },
   { label: "Maintenance", icon: Wrench, path: "/admin/maintenance" },
   { label: "Payments", icon: CreditCard, path: "/admin/payments" },
+  { label: "Offers", icon: Gift, path: "/admin/offers" },
   { label: "Reports", icon: BarChart3, path: "/admin/reports" },
   { label: "Staff", icon: UserCog, path: "/admin/staff" },
   { label: "Settings", icon: Settings, path: "/admin/settings" },
