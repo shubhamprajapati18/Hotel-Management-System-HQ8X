@@ -329,7 +329,7 @@ export default function AdminStaff() {
                       <tr key={p.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
                         <td className="py-3 px-4 font-medium text-foreground">{member?.name || "Deleted Staff"}</td>
                         <td className="py-3 px-4 text-foreground/80">{p.month}</td>
-                        <td className="py-3 px-4 text-right font-semibold text-primary">₹{Number(p.amount).toLocaleString()}</td>
+                        <td className="py-3 px-4 text-right font-semibold text-primary">{formatINR(p.amount)}</td>
                         <td className="py-3 px-4 text-muted-foreground text-xs">{format(parseISO(p.paid_at), "MMM d, yyyy")}</td>
                         <td className="py-3 px-4 text-muted-foreground text-xs">{p.notes || "—"}</td>
                         <td className="py-3 px-4">
