@@ -1,6 +1,7 @@
 import { GuestNav } from "@/components/GuestNav";
 import { motion } from "framer-motion";
 import { Clock, MapPin, Star, UtensilsCrossed, Wine, Coffee, Cake } from "lucide-react";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 const restaurants = [
@@ -141,12 +142,7 @@ export default function Dining() {
         </div>
       </section>
 
-      <footer className="border-t border-border py-12 md:py-16 px-6">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="font-heading text-2xl font-medium tracking-wide gradient-gold-text">HQ8X</span>
-          <p className="text-xs text-muted-foreground/60 tracking-wider">© 2026 HQ8X Hotel Experience Platform. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

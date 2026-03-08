@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { GuestNav } from "@/components/GuestNav";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { rooms } from "@/data/rooms";
 import { motion } from "framer-motion";
@@ -96,6 +97,7 @@ export default function Rooms() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
