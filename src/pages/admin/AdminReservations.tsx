@@ -2,15 +2,15 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Search, Filter, ChevronRight, User, Calendar, BedDouble, DollarSign, CreditCard, CheckCircle2, Clock, XCircle, AlertCircle } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, parseISO } from "date-fns";
 import { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 const statusStyles: Record<string, string> = {
@@ -26,6 +26,13 @@ const paymentStatusConfig: Record<string, { icon: React.ReactNode; label: string
   failed: { icon: <XCircle className="h-4 w-4" />, label: "Failed", className: "bg-destructive/20 text-destructive border-destructive/30" },
   refunded: { icon: <AlertCircle className="h-4 w-4" />, label: "Refunded", className: "bg-muted text-muted-foreground border-border" },
 };
+
+const statusOptions = [
+  { value: "confirmed", label: "Confirmed" },
+  { value: "checked-in", label: "Checked In" },
+  { value: "cancelled", label: "Cancelled" },
+  { value: "pending", label: "Pending" },
+];
 
 export default function AdminReservations() {
   const [search, setSearch] = useState("");
@@ -52,7 +59,7 @@ export default function AdminReservations() {
 
   const markPaymentMutation = useMutation({
     mutationFn: async ({ bookingId, paymentStatus }: { bookingId: string; paymentStatus: string }) => {
-      const { error } = await supabase.from("bookings").update({ payment_status: paymentStatus } as any).eq("id", bookingId);
+      const { error } = await supabase.from("bookings").update({ payment_status: paymentStatus }).eq("id", bookingId);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -102,7 +109,7 @@ export default function AdminReservations() {
     checkInFormatted: format(parseISO(b.check_in), "MMM d, yyyy"),
     checkOutFormatted: format(parseISO(b.check_out), "MMM d, yyyy"),
     status: b.status,
-    paymentStatus: (b as any).payment_status || "pending",
+    paymentStatus: b.payment_status || "pending",
     amount: Number(b.total_price),
     amountFormatted: `$${Number(b.total_price).toLocaleString()}`,
     guests: b.guests,
@@ -174,18 +181,29 @@ export default function AdminReservations() {
                 return (
                   <tr
                     key={r.fullId}
-                    className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer"
-                    onClick={() => setSelectedBooking(r.fullId)}
+                    className="border-b border-border/50 hover:bg-secondary/30 transition-colors"
                   >
                     <td className="py-3 px-4 font-mono text-xs text-muted-foreground">{r.id}</td>
                     <td className="py-3 px-4 font-medium text-foreground">{r.guest}</td>
                     <td className="py-3 px-4 text-foreground/80">{r.room}</td>
                     <td className="py-3 px-4 text-muted-foreground">{r.checkInFormatted}</td>
                     <td className="py-3 px-4 text-muted-foreground">{r.checkOutFormatted}</td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${statusStyles[r.status] || "bg-muted text-muted-foreground"}`}>
-                        {r.status}
-                      </span>
+                    <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                      <Select
+                        value={r.status}
+                        onValueChange={(value) => updateStatusMutation.mutate({ bookingId: r.fullId, status: value })}
+                      >
+                        <SelectTrigger className={`w-[130px] h-7 text-xs font-medium border-0 capitalize ${statusStyles[r.status] || "bg-muted text-muted-foreground"}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {statusOptions.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value} className="capitalize text-xs">
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </td>
                     <td className="py-3 px-4">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${pConfig.className}`}>
@@ -193,7 +211,11 @@ export default function AdminReservations() {
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right font-semibold text-primary">{r.amountFormatted}</td>
-                    <td className="py-3 px-4"><Button variant="ghost" size="icon"><ChevronRight className="h-4 w-4" /></Button></td>
+                    <td className="py-3 px-4">
+                      <Button variant="ghost" size="icon" onClick={() => setSelectedBooking(r.fullId)}>
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </td>
                   </tr>
                 );
               })}
@@ -202,17 +224,17 @@ export default function AdminReservations() {
         )}
       </motion.div>
 
-      {/* Reservation Detail Sheet */}
-      <Sheet open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
-        <SheetContent className="sm:max-w-lg overflow-y-auto">
+      {/* Reservation Detail Modal */}
+      <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
           {selected && (
             <>
-              <SheetHeader>
-                <SheetTitle className="text-xl">Reservation #{selected.id}</SheetTitle>
-                <SheetDescription>Created {selected.createdAt}</SheetDescription>
-              </SheetHeader>
+              <DialogHeader>
+                <DialogTitle className="text-xl">Reservation #{selected.id}</DialogTitle>
+                <DialogDescription>Created {selected.createdAt}</DialogDescription>
+              </DialogHeader>
 
-              <div className="mt-6 space-y-6">
+              <div className="mt-2 space-y-6">
                 {/* Guest Info */}
                 <div className="flex items-start gap-3">
                   <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
@@ -337,8 +359,8 @@ export default function AdminReservations() {
               </div>
             </>
           )}
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
