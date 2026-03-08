@@ -97,6 +97,7 @@ export default function Rooms() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
