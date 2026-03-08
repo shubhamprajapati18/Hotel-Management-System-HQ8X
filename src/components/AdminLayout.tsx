@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, CalendarDays, BedDouble, Users, SprayCan, Wrench,
-  CreditCard, BarChart3, UserCog, Settings, LogOut, ChevronLeft, Menu, Moon, Sun, ConciergeBell,
+  CreditCard, BarChart3, UserCog, Settings, LogOut, ChevronLeft, Menu, Moon, Sun, ConciergeBell, Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
