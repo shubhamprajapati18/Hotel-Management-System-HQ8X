@@ -197,6 +197,9 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <TestimonialsSection />
+
       {/* CTA */}
       <section className="py-24 md:py-32 px-6">
         <div className="container mx-auto max-w-2xl text-center">

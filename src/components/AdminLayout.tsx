@@ -22,6 +22,7 @@ const navItems = [
   { label: "Offers", icon: Gift, path: "/admin/offers" },
   { label: "Dining", icon: UtensilsCrossed, path: "/admin/dining" },
   { label: "Contact Msgs", icon: MessageSquare, path: "/admin/contact-submissions" },
+  { label: "Testimonials", icon: Quote, path: "/admin/testimonials" },
   { label: "Reports", icon: BarChart3, path: "/admin/reports" },
   { label: "Staff", icon: UserCog, path: "/admin/staff" },
   { label: "Settings", icon: Settings, path: "/admin/settings" },
