@@ -22,14 +22,22 @@ const navItems = [
 export function AdminLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
+  const [dark, setDark] = useState(() => {
+    try { return localStorage.getItem("admin-dark") === "true"; } catch { return false; }
+  });
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("admin-dark", String(dark));
   }, [dark]);
 
+  // Ensure <html> never has dark — guest pages always light
+  useEffect(() => {
+    document.documentElement.classList.remove("dark");
+    return () => { document.documentElement.classList.remove("dark"); };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className={cn("min-h-screen flex", dark ? "dark bg-[hsl(240,10%,8%)]" : "bg-background")}>
       {/* Sidebar */}
       <aside
         className={cn(
@@ -81,7 +89,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main */}
-      <main className={cn("flex-1 transition-all duration-400", collapsed ? "ml-[68px]" : "ml-[250px]")}>
+      <main className={cn("flex-1 transition-all duration-400 bg-background text-foreground", collapsed ? "ml-[68px]" : "ml-[250px]")}>
         <header className="sticky top-0 z-30 h-14 flex items-center px-6 md:px-8 border-b border-border bg-background/80 backdrop-blur-xl">
           <div className="flex-1" />
           <div className="flex items-center gap-3">
