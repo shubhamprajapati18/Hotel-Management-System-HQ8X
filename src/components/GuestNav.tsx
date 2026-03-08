@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, ChevronDown } from "lucide-react";
+import { Menu, X, User, LogOut, ChevronDown, Bell } from "lucide-react";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,6 +26,7 @@ export function GuestNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, isAdmin, signOut } = useAuth();
+  const unreadCount = useUnreadNotifications();
 
   const hasDarkHero = darkHeroPages.includes(location.pathname);
   const solid = scrolled || !hasDarkHero;
@@ -87,8 +89,23 @@ export function GuestNav() {
         </div>
 
         {/* Right Actions */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-2">
           {user ? (
+            <>
+              <Link
+                to="/my-stay/notifications"
+                className={cn(
+                  "relative p-2 rounded-xl transition-colors duration-300",
+                  solid ? "hover:bg-secondary text-foreground/60 hover:text-foreground" : "hover:bg-white/10 text-white/60 hover:text-white"
+                )}
+              >
+                <Bell className="h-4.5 w-4.5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-semibold text-primary-foreground">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </Link>
             <div className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
@@ -155,6 +172,7 @@ export function GuestNav() {
                 )}
               </AnimatePresence>
             </div>
+            </>
           ) : (
             <>
               <Link to="/login">
