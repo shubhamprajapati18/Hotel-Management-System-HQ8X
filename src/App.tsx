@@ -40,6 +40,9 @@ import Offers from "./pages/Offers";
 import Contact from "./pages/Contact";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import Payment from "./pages/Payment";
+import BookingConfirmation from "./pages/BookingConfirmation";
+import AdminTestimonials from "./pages/admin/AdminTestimonials";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +65,8 @@ const App = () => (
             <Route path="/rooms/:id" element={<RoomDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+            <Route path="/booking-confirmation" element={<ProtectedRoute><BookingConfirmation /></ProtectedRoute>} />
 
             {/* Protected guest route */}
             <Route path="/my-stay" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
@@ -90,6 +95,7 @@ const App = () => (
             <Route path="/admin/booking-calendar" element={<ProtectedRoute adminOnly><AdminBookingCalendar /></ProtectedRoute>} />
             <Route path="/admin/group-reservations" element={<ProtectedRoute adminOnly><AdminGroupReservations /></ProtectedRoute>} />
             <Route path="/admin/waitlist" element={<ProtectedRoute adminOnly><AdminWaitlist /></ProtectedRoute>} />
+            <Route path="/admin/testimonials" element={<ProtectedRoute adminOnly><AdminTestimonials /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

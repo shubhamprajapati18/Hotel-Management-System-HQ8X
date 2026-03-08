@@ -6,6 +6,7 @@ import { Star, Wifi, Waves, UtensilsCrossed, Dumbbell, Sparkles, ArrowRight } fr
 import heroImg from "@/assets/hero-hotel.jpg";
 import { rooms } from "@/data/rooms";
 import { Footer } from "@/components/Footer";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
 
 const amenities = [
   { icon: Wifi, label: "High-Speed Wi-Fi" },
@@ -195,6 +196,9 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials */}
+      <TestimonialsSection />
 
       {/* CTA */}
       <section className="py-24 md:py-32 px-6">
