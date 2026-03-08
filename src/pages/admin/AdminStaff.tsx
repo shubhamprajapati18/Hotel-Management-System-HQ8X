@@ -262,7 +262,7 @@ export default function AdminStaff() {
                           <span className="text-foreground/80">{s.role}</span>
                           <div className="text-[10px] text-muted-foreground">{s.department} · {s.shift}</div>
                         </td>
-                        <td className="py-3 px-3 text-right font-semibold text-primary">₹{Number(s.salary).toLocaleString()}</td>
+                        <td className="py-3 px-3 text-right font-semibold text-primary">{formatINR(s.salary)}</td>
                         <td className="py-3 px-3 text-center">
                           {isPaidThisMonth ? (
                             <span className="inline-flex items-center gap-1 text-accent text-xs font-medium"><CheckCircle2 className="h-4 w-4" /> Paid</span>
