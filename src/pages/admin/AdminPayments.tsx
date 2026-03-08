@@ -150,7 +150,7 @@ export default function AdminPayments() {
                     </span>
                   </td>
                   <td className={`py-3 px-4 text-right font-semibold ${b.status === "cancelled" ? "text-destructive" : "text-primary"}`}>
-                    ₹{Number(b.total_price).toLocaleString()}
+                    {formatINR(b.total_price)}
                   </td>
                   <td className="py-3 px-4 text-right text-muted-foreground text-xs">
                     {format(parseISO(b.created_at), "MMM d, yyyy")}

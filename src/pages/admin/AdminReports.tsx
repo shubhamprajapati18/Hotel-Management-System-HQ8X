@@ -451,7 +451,7 @@ export default function AdminReports() {
                   </div>
                   <div className="flex justify-between items-center border-b border-border pb-3">
                     <span className="text-sm text-muted-foreground">Total Paid (All Time)</span>
-                    <span className="text-lg font-bold text-foreground">₹{totalPayroll.toLocaleString()}</span>
+                    <span className="text-lg font-bold text-foreground">{formatINR(totalPayroll)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Total Payments Made</span>
