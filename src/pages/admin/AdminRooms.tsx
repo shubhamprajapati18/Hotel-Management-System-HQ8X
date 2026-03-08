@@ -367,7 +367,7 @@ export default function AdminRooms() {
                 <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
                   {room.size && <span>{room.size}</span>}
                   <span>{room.capacity} Guests</span>
-                  <span className="text-primary font-semibold">₹{room.price}/night</span>
+                  <span className="text-primary font-semibold">{formatINR(room.price)}/night</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {room.amenities.slice(0, 3).map((a) => (
