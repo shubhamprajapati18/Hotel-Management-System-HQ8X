@@ -281,8 +281,8 @@ export default function AdminReports() {
                   <AreaChart data={dailyRevenue}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={10} interval={4} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `₹${v}`} />
-                    <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`₹${Number(v).toLocaleString()}`, "Revenue"]} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => formatINRShort(v)} />
+                    <Tooltip contentStyle={chartStyle} formatter={(v: any) => [formatINR(v), "Revenue"]} />
                     <Area type="monotone" dataKey="revenue" fill="hsla(43, 76%, 52%, 0.15)" stroke="hsl(var(--primary))" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
