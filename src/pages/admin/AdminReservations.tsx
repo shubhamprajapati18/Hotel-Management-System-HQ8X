@@ -115,7 +115,7 @@ export default function AdminReservations() {
     status: b.status,
     paymentStatus: b.payment_status || "pending",
     amount: Number(b.total_price),
-    amountFormatted: `$${Number(b.total_price).toLocaleString()}`,
+    amountFormatted: `₹${Number(b.total_price).toLocaleString()}`,
     guests: b.guests,
     specialRequests: b.special_requests,
     createdAt: format(parseISO(b.created_at), "MMM d, yyyy 'at' h:mm a"),

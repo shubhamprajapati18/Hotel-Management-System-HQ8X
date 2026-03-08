@@ -74,7 +74,7 @@ export default function AdminDashboard() {
   const kpis = [
     { label: "Total Bookings", value: totalBookings.toLocaleString(), change: "", icon: CalendarCheck },
     { label: "Occupancy Rate", value: `${occupancyRate}%`, change: "", icon: BedDouble, emerald: true },
-    { label: "Revenue Today", value: `$${todayRevenue.toLocaleString()}`, change: "", icon: DollarSign },
+    { label: "Revenue Today", value: `₹${todayRevenue.toLocaleString()}`, change: "", icon: DollarSign },
     { label: "Available Rooms", value: String(availableRooms), change: "", icon: BedDouble },
     { label: "Pending Tasks", value: String(pendingTasks), change: "", icon: SprayCan, destructive: pendingTasks > 0 },
     { label: "Upcoming Check-ins", value: String(upcomingCheckins), change: "", icon: Users, emerald: true },
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
       checkIn: format(parseISO(b.check_in), "MMM d"),
       checkOut: format(parseISO(b.check_out), "MMM d"),
       status: b.status.charAt(0).toUpperCase() + b.status.slice(1),
-      amount: `$${Number(b.total_price).toLocaleString()}`,
+      amount: `₹${Number(b.total_price).toLocaleString()}`,
     }));
 
   return (
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
               <BarChart data={weeklyRevenueData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `$${v / 1000}k`} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `₹${v / 1000}k`} />
                 <Tooltip contentStyle={tooltipStyle} />
                 <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[5, 5, 0, 0]} />
               </BarChart>

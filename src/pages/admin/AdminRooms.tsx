@@ -366,7 +366,7 @@ export default function AdminRooms() {
                 <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
                   {room.size && <span>{room.size}</span>}
                   <span>{room.capacity} Guests</span>
-                  <span className="text-primary font-semibold">${room.price}/night</span>
+                  <span className="text-primary font-semibold">₹{room.price}/night</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {room.amenities.slice(0, 3).map((a) => (
@@ -475,7 +475,7 @@ export default function AdminRooms() {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label>Price/Night ($)</Label>
+                <Label>Price/Night (₹)</Label>
                 <Input className="mt-1" type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
               </div>
               <div>

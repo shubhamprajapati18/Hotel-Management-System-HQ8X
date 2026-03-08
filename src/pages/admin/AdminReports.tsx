@@ -207,10 +207,10 @@ export default function AdminReports() {
   };
 
   const kpis = [
-    { icon: DollarSign, value: `$${totalRevenue.toLocaleString()}`, label: "Total Revenue", color: "text-primary" },
+    { icon: DollarSign, value: `₹${totalRevenue.toLocaleString()}`, label: "Total Revenue", color: "text-primary" },
     { icon: BedDouble, value: `${occupancyRate}%`, label: "Occupancy Rate", color: "text-accent" },
     { icon: CalendarCheck, value: activeBookings.length, label: "Active Bookings", color: "text-primary" },
-    { icon: TrendingUp, value: `$${Math.round(avgBookingValue).toLocaleString()}`, label: "Avg Booking Value", color: "text-accent" },
+    { icon: TrendingUp, value: `₹${Math.round(avgBookingValue).toLocaleString()}`, label: "Avg Booking Value", color: "text-accent" },
     { icon: Users, value: `${avgStay.toFixed(1)} nights`, label: "Avg Stay Length", color: "text-primary" },
     { icon: Wrench, value: `${cancellationRate}%`, label: "Cancellation Rate", color: "text-destructive" },
   ];
@@ -267,8 +267,8 @@ export default function AdminReports() {
                   <BarChart data={monthlyRevenue}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`$${Number(v).toLocaleString()}`, "Revenue"]} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+                    <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`₹${Number(v).toLocaleString()}`, "Revenue"]} />
                     <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -280,8 +280,8 @@ export default function AdminReports() {
                   <AreaChart data={dailyRevenue}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={10} interval={4} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `$${v}`} />
-                    <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`$${Number(v).toLocaleString()}`, "Revenue"]} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `₹${v}`} />
+                    <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`₹${Number(v).toLocaleString()}`, "Revenue"]} />
                     <Area type="monotone" dataKey="revenue" fill="hsla(43, 76%, 52%, 0.15)" stroke="hsl(var(--primary))" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -297,7 +297,7 @@ export default function AdminReports() {
                       <Pie data={categoryData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} fontSize={11}>
                         {categoryData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                       </Pie>
-                      <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`$${Number(v).toLocaleString()}`, "Revenue"]} />
+                      <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`₹${Number(v).toLocaleString()}`, "Revenue"]} />
                     </PieChart>
                   </ResponsiveContainer>
                 )}
@@ -309,7 +309,7 @@ export default function AdminReports() {
                   <BarChart data={months12.map((m, i) => ({ month: format(m, "MMM yy"), revenue: monthlyRevenue[i]?.revenue || 0, payroll: payrollMonthly[i]?.payroll || 0 }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
                     <Tooltip contentStyle={chartStyle} />
                     <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Revenue" />
                     <Bar dataKey="payroll" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} name="Payroll" />
@@ -426,8 +426,8 @@ export default function AdminReports() {
                   <BarChart data={payrollMonthly}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`$${Number(v).toLocaleString()}`, "Payroll"]} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+                    <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`₹${Number(v).toLocaleString()}`, "Payroll"]} />
                     <Bar dataKey="payroll" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -446,11 +446,11 @@ export default function AdminReports() {
                   </div>
                   <div className="flex justify-between items-center border-b border-border pb-3">
                     <span className="text-sm text-muted-foreground">Monthly Payroll Budget</span>
-                    <span className="text-lg font-bold text-primary">${staff.filter((s: any) => s.status === "Active").reduce((s: number, st: any) => s + Number(st.salary), 0).toLocaleString()}</span>
+                    <span className="text-lg font-bold text-primary">₹{staff.filter((s: any) => s.status === "Active").reduce((s: number, st: any) => s + Number(st.salary), 0).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-border pb-3">
                     <span className="text-sm text-muted-foreground">Total Paid (All Time)</span>
-                    <span className="text-lg font-bold text-foreground">${totalPayroll.toLocaleString()}</span>
+                    <span className="text-lg font-bold text-foreground">₹{totalPayroll.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Total Payments Made</span>
