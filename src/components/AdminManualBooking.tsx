@@ -142,8 +142,8 @@ export function AdminManualBooking() {
 
             {totalPrice > 0 && (
               <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm">
-                <span className="text-muted-foreground">{nights} night{nights > 1 ? "s" : ""} × ${selectedRoom?.price}/night = </span>
-                <span className="font-semibold text-primary">${totalPrice.toLocaleString()}</span>
+                <span className="text-muted-foreground">{nights} night{nights > 1 ? "s" : ""} × ₹{selectedRoom?.price}/night = </span>
+                <span className="font-semibold text-primary">₹{totalPrice.toLocaleString()}</span>
               </div>
             )}
 

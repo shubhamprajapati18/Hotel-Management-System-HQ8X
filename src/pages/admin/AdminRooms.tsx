@@ -475,7 +475,7 @@ export default function AdminRooms() {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label>Price/Night ($)</Label>
+                <Label>Price/Night (₹)</Label>
                 <Input className="mt-1" type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
               </div>
               <div>

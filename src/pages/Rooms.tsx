@@ -110,7 +110,7 @@ export default function Rooms() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-xl md:text-2xl font-heading font-semibold text-primary">${room.price}</span>
+                          <span className="text-xl md:text-2xl font-heading font-semibold text-primary">₹{room.price}</span>
                           <span className="text-xs text-muted-foreground ml-1">/night</span>
                         </div>
                         <span className="text-[10px] tracking-[0.15em] uppercase font-medium text-muted-foreground group-hover:text-primary transition-colors duration-300 flex items-center gap-1">
