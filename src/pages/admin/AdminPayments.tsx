@@ -140,6 +140,13 @@ export default function AdminPayments() {
                     }`}>
                       {b.status}
                     </span>
+                    <span className={`ml-2 text-[10px] font-medium capitalize ${
+                      b.payment_status === "paid" ? "text-accent" :
+                      b.payment_status === "refunded" ? "text-muted-foreground" :
+                      "text-primary"
+                    }`}>
+                      ({b.payment_status})
+                    </span>
                   </td>
                   <td className={`py-3 px-4 text-right font-semibold ${b.status === "cancelled" ? "text-destructive" : "text-primary"}`}>
                     ${Number(b.total_price).toLocaleString()}

@@ -162,14 +162,17 @@ export default function AdminReservations() {
             <h1 className="font-heading text-3xl font-bold text-foreground">Reservations</h1>
             <p className="text-muted-foreground text-sm">Manage all guest bookings ({bookings.length} total)</p>
           </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search bookings..."
-              className="pl-9 bg-secondary border-border w-64"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search bookings..."
+                className="pl-9 bg-secondary border-border w-64"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <AdminManualBooking />
           </div>
         </div>
 
