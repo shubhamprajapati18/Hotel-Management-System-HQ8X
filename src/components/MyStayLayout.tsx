@@ -19,6 +19,7 @@ const sideNav = [
 
 export function MyStayLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const unreadCount = useUnreadNotifications();
 
   return (
     <div className="min-h-screen bg-background">
