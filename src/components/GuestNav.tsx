@@ -89,8 +89,23 @@ export function GuestNav() {
         </div>
 
         {/* Right Actions */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-2">
           {user ? (
+            <>
+              <Link
+                to="/my-stay/notifications"
+                className={cn(
+                  "relative p-2 rounded-xl transition-colors duration-300",
+                  solid ? "hover:bg-secondary text-foreground/60 hover:text-foreground" : "hover:bg-white/10 text-white/60 hover:text-white"
+                )}
+              >
+                <Bell className="h-4.5 w-4.5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-semibold text-primary-foreground">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </Link>
             <div className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
