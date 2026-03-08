@@ -84,7 +84,7 @@ export function GuestNav() {
           </Link>
           <Link to="/login">
             <Button
-              variant={solid ? "gold-outline" : "outline"}
+              variant={solid ? "luxury" : "outline"}
               size="sm"
               className={cn(
                 "text-xs tracking-wider uppercase px-5 transition-all duration-300",
@@ -132,7 +132,7 @@ export function GuestNav() {
               <div className="h-px bg-border my-1" />
               <div className="flex gap-3">
                 <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1">
-                  <Button variant="gold-outline" className="w-full text-xs tracking-wider uppercase">Sign In</Button>
+                  <Button variant="luxury" className="w-full text-xs tracking-wider uppercase">Sign In</Button>
                 </Link>
                 <Link to="/my-stay" onClick={() => setMobileOpen(false)} className="flex-1">
                   <Button variant="ghost" className="w-full text-xs tracking-wider uppercase text-foreground/60">My Stay</Button>
