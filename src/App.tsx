@@ -65,6 +65,8 @@ const App = () => (
             <Route path="/rooms/:id" element={<RoomDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+            <Route path="/booking-confirmation" element={<ProtectedRoute><BookingConfirmation /></ProtectedRoute>} />
 
             {/* Protected guest route */}
             <Route path="/my-stay" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
