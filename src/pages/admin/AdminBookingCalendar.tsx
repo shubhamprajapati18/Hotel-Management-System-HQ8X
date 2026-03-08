@@ -21,6 +21,7 @@ import {
   endOfWeek,
 } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { AdminManualBooking } from "@/components/AdminManualBooking";
 
 const statusColors: Record<string, string> = {
   confirmed: "bg-accent/70 text-accent-foreground",
