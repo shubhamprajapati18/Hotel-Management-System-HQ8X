@@ -59,6 +59,81 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
+      dining_options: {
+        Row: {
+          active: boolean
+          created_at: string
+          cuisine: string
+          description: string
+          highlight: string
+          hours: string
+          icon: string
+          id: string
+          location: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          cuisine?: string
+          description?: string
+          highlight?: string
+          hours?: string
+          icon?: string
+          id?: string
+          location?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          cuisine?: string
+          description?: string
+          highlight?: string
+          hours?: string
+          icon?: string
+          id?: string
+          location?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
