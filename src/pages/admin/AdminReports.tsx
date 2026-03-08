@@ -207,10 +207,10 @@ export default function AdminReports() {
   };
 
   const kpis = [
-    { icon: DollarSign, value: `$${totalRevenue.toLocaleString()}`, label: "Total Revenue", color: "text-primary" },
+    { icon: DollarSign, value: `₹${totalRevenue.toLocaleString()}`, label: "Total Revenue", color: "text-primary" },
     { icon: BedDouble, value: `${occupancyRate}%`, label: "Occupancy Rate", color: "text-accent" },
     { icon: CalendarCheck, value: activeBookings.length, label: "Active Bookings", color: "text-primary" },
-    { icon: TrendingUp, value: `$${Math.round(avgBookingValue).toLocaleString()}`, label: "Avg Booking Value", color: "text-accent" },
+    { icon: TrendingUp, value: `₹${Math.round(avgBookingValue).toLocaleString()}`, label: "Avg Booking Value", color: "text-accent" },
     { icon: Users, value: `${avgStay.toFixed(1)} nights`, label: "Avg Stay Length", color: "text-primary" },
     { icon: Wrench, value: `${cancellationRate}%`, label: "Cancellation Rate", color: "text-destructive" },
   ];
