@@ -254,7 +254,7 @@ export default function AdminRooms() {
                   <div className="w-full h-full flex items-center justify-center"><ImageIcon className="h-12 w-12 text-muted-foreground/30" /></div>
                 )}
                 <div className="absolute top-3 right-3 flex gap-1.5">
-                  {room.isDb && (
+                  {room.isDb ? (
                     <>
                       <Button variant="secondary" size="icon" className="h-7 w-7" onClick={() => openEdit(room.raw)}>
                         <Edit className="h-3 w-3" />
@@ -263,13 +263,17 @@ export default function AdminRooms() {
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </>
+                  ) : (
+                    <>
+                      <Button variant="secondary" size="icon" className="h-7 w-7" onClick={() => handleEditStatic(staticRooms.find(s => s.id === room.id)!)}>
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button variant="secondary" size="icon" className="h-7 w-7" onClick={() => handleDeleteStatic(staticRooms.find(s => s.id === room.id)!)}>
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </>
                   )}
                 </div>
-                {!room.isDb && (
-                  <div className="absolute top-3 left-3">
-                    <span className="text-[10px] bg-secondary/80 backdrop-blur px-2 py-0.5 rounded text-muted-foreground">Static</span>
-                  </div>
-                )}
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between mb-2">
