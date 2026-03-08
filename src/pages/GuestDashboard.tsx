@@ -191,6 +191,32 @@ export default function GuestDashboard() {
                               {displayStatus}
                             </span>
                             <span className="text-lg font-heading font-semibold text-primary">${Number(b.total_price)}</span>
+                            {(displayStatus === "Upcoming" || displayStatus === "Confirmed") && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8">
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to cancel your reservation at <strong>{b.room_name}</strong> ({format(parseISO(b.check_in), "MMM d")} – {format(parseISO(b.check_out), "MMM d, yyyy")})? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Keep Booking</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => cancelBooking.mutate(b.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Cancel Booking
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
                             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-8 w-8" asChild>
                               <Link to={`/rooms/${b.room_name}`}>
                                 <ChevronRight className="h-4 w-4" />
