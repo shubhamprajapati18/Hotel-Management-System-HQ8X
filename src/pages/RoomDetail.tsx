@@ -58,7 +58,6 @@ export default function RoomDetail() {
     enabled: !!dbId,
   });
 
-  // Fetch gallery images for this room
   const { data: galleryImages = [] } = useQuery({
     queryKey: ["room-gallery", dbId],
     queryFn: async () => {
@@ -68,6 +67,17 @@ export default function RoomDetail() {
       return data;
     },
     enabled: !!dbId,
+  });
+
+  // Fetch user reviews for this room
+  const actualRoomIdForReviews = dbId || id || "";
+  const { data: roomReviews = [] } = useQuery({
+    queryKey: ["room-reviews", actualRoomIdForReviews],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("room_reviews").select("*").eq("room_id", actualRoomIdForReviews).order("created_at", { ascending: false });
+      if (error) return [];
+      return data;
+    },
   });
 
   const room: DisplayRoom | null = staticRoom
@@ -88,7 +98,6 @@ export default function RoomDetail() {
       }
     : null;
 
-  // Build all images array: thumbnail first, then gallery
   const allImages: string[] = [];
   if (room?.image) allImages.push(room.image);
   galleryImages.forEach((img) => allImages.push(img.image_url));
@@ -107,25 +116,36 @@ export default function RoomDetail() {
   const total = subtotal + serviceFee;
   const actualRoomId = room.id.startsWith("db-") ? room.id.slice(3) : room.id;
 
-  const handleBooking = async () => {
+  const handleBooking = () => {
     if (!checkIn || !checkOut) { toast.error("Please select check-in and check-out dates"); return; }
     if (!user) { toast.error("Please sign in to book a room"); navigate("/login"); return; }
-    setIsSubmitting(true);
-    const { error } = await supabase.from("bookings").insert({
-      user_id: user.id, room_id: actualRoomId, room_name: room.name,
-      check_in: format(checkIn, "yyyy-MM-dd"), check_out: format(checkOut, "yyyy-MM-dd"),
-      guests: parseInt(guests), special_requests: specialRequests.trim() || null, total_price: total,
+    // Navigate to payment page with booking details
+    const params = new URLSearchParams({
+      roomId: actualRoomId,
+      roomName: room.name,
+      checkIn: format(checkIn, "yyyy-MM-dd"),
+      checkOut: format(checkOut, "yyyy-MM-dd"),
+      guests,
+      specialRequests: specialRequests.trim(),
+      total: String(total),
+      subtotal: String(subtotal),
+      serviceFee: String(serviceFee),
+      nights: String(nights),
+      pricePerNight: String(room.price),
     });
-    setIsSubmitting(false);
-    if (error) { toast.error("Booking failed. Please try again."); return; }
-    toast.success("Booking confirmed! Redirecting to My Stay...");
-    setTimeout(() => navigate("/my-stay"), 1500);
+    navigate(`/payment?${params.toString()}`);
   };
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
+
+  // Combine static reviews + DB reviews
+  const staticReviews = [
+    { name: "Alexandra M.", text: "An absolutely stunning room with impeccable service. The views were breathtaking and every detail was thoughtfully considered.", rating: 5 },
+    { name: "James T.", text: "Every detail was perfect. We'll definitely return for another stay. The concierge went above and beyond.", rating: 5 },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -160,23 +180,15 @@ export default function RoomDetail() {
               )}
               <div className="absolute inset-0 rounded-2xl" style={{ background: "linear-gradient(180deg, transparent 50%, hsla(240,10%,10%,0.4) 100%)" }} />
 
-              {/* Gallery thumbnails */}
               {allImages.length > 1 && (
                 <div className="absolute bottom-4 right-4 z-10 flex items-center gap-2">
                   {allImages.slice(1, 4).map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={(e) => { e.stopPropagation(); openLightbox(i + 1); }}
-                      className="w-14 h-10 md:w-16 md:h-12 rounded-lg overflow-hidden border-2 border-white/30 hover:border-white/70 transition-all"
-                    >
+                    <button key={i} onClick={(e) => { e.stopPropagation(); openLightbox(i + 1); }} className="w-14 h-10 md:w-16 md:h-12 rounded-lg overflow-hidden border-2 border-white/30 hover:border-white/70 transition-all">
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
                   ))}
                   {allImages.length > 4 && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); openLightbox(0); }}
-                      className="w-14 h-10 md:w-16 md:h-12 rounded-lg bg-black/50 border-2 border-white/30 hover:border-white/70 transition-all flex items-center justify-center"
-                    >
+                    <button onClick={(e) => { e.stopPropagation(); openLightbox(0); }} className="w-14 h-10 md:w-16 md:h-12 rounded-lg bg-black/50 border-2 border-white/30 hover:border-white/70 transition-all flex items-center justify-center">
                       <Camera className="h-4 w-4 text-white mr-1" />
                       <span className="text-white text-xs font-medium">+{allImages.length - 4}</span>
                     </button>
@@ -184,16 +196,13 @@ export default function RoomDetail() {
                 </div>
               )}
               {allImages.length > 1 && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); openLightbox(0); }}
-                  className="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 text-white/70 hover:text-white text-xs bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full transition-colors"
-                >
+                <button onClick={(e) => { e.stopPropagation(); openLightbox(0); }} className="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 text-white/70 hover:text-white text-xs bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full transition-colors">
                   <Camera className="h-3.5 w-3.5" />{allImages.length} Photos
                 </button>
               )}
             </div>
 
-            {/* Booking Card - placed next to image */}
+            {/* Booking Card */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.6 }} className="flex flex-col">
               <div className="rounded-2xl border border-border bg-card p-6 md:p-7 lg:sticky lg:top-28 flex-1 flex flex-col justify-between">
                 <div>
@@ -262,6 +271,7 @@ export default function RoomDetail() {
           </div>
         </div>
 
+        {/* Content sections */}
         <div className="container mx-auto max-w-6xl px-5 md:px-6 py-10 md:py-16">
           <div className="max-w-3xl space-y-10 md:space-y-14">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
@@ -269,62 +279,68 @@ export default function RoomDetail() {
               <p className="text-muted-foreground leading-[1.8] text-[15px]">{room.description}</p>
             </motion.div>
 
-              {/* Photo Grid */}
-              {allImages.length > 1 && (
-                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.6 }}>
-                  <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-5 tracking-tight">Photos</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {allImages.slice(0, 6).map((img, i) => (
-                      <button
-                        key={i}
-                        onClick={() => openLightbox(i)}
-                        className="relative rounded-xl overflow-hidden aspect-[4/3] group"
-                      >
-                        <img src={img} alt={`${room.name} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        {i === 5 && allImages.length > 6 && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <span className="text-white font-heading text-lg">+{allImages.length - 6} more</span>
-                          </div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.6 }}>
-                <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-5 tracking-tight">Amenities</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                  {room.amenities.map((a) => (
-                    <div key={a} className="flex items-center gap-3 text-foreground/70">
-                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0"><Check className="h-3.5 w-3.5 text-primary" /></div>
-                      <span className="text-sm">{a}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}>
-                <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-5 tracking-tight">Guest Reviews</h2>
-                <div className="space-y-4">
-                  {[
-                    { name: "Alexandra M.", text: "An absolutely stunning room with impeccable service. The views were breathtaking and every detail was thoughtfully considered.", rating: 5 },
-                    { name: "James T.", text: "Every detail was perfect. We'll definitely return for another stay. The concierge went above and beyond.", rating: 5 },
-                  ].map((r, i) => (
-                    <div key={i} className="rounded-xl border border-border bg-card p-5 md:p-6">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-heading font-semibold">{r.name[0]}</div>
-                        <div>
-                          <span className="text-sm font-medium text-foreground">{r.name}</span>
-                          <div className="flex mt-0.5">{Array.from({ length: r.rating }).map((_, j) => <Star key={j} className="h-3 w-3 text-primary fill-primary" />)}</div>
+            {allImages.length > 1 && (
+              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.6 }}>
+                <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-5 tracking-tight">Photos</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {allImages.slice(0, 6).map((img, i) => (
+                    <button key={i} onClick={() => openLightbox(i)} className="relative rounded-xl overflow-hidden aspect-[4/3] group">
+                      <img src={img} alt={`${room.name} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      {i === 5 && allImages.length > 6 && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <span className="text-white font-heading text-lg">+{allImages.length - 6} more</span>
                         </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{r.text}</p>
-                    </div>
+                      )}
+                    </button>
                   ))}
                 </div>
               </motion.div>
-            </div>
+            )}
+
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.6 }}>
+              <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-5 tracking-tight">Amenities</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                {room.amenities.map((a) => (
+                  <div key={a} className="flex items-center gap-3 text-foreground/70">
+                    <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0"><Check className="h-3.5 w-3.5 text-primary" /></div>
+                    <span className="text-sm">{a}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}>
+              <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-5 tracking-tight">Guest Reviews</h2>
+              <div className="space-y-4">
+                {/* DB reviews */}
+                {roomReviews.map((r) => (
+                  <div key={r.id} className="rounded-xl border border-border bg-card p-5 md:p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-heading font-semibold">G</div>
+                      <div>
+                        <span className="text-sm font-medium text-foreground">Verified Guest</span>
+                        <div className="flex mt-0.5">{Array.from({ length: r.rating }).map((_, j) => <Star key={j} className="h-3 w-3 text-primary fill-primary" />)}</div>
+                      </div>
+                      <span className="ml-auto text-xs text-muted-foreground">{format(new Date(r.created_at), "MMM d, yyyy")}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{r.review_text}</p>
+                  </div>
+                ))}
+                {/* Static reviews */}
+                {staticReviews.map((r, i) => (
+                  <div key={`static-${i}`} className="rounded-xl border border-border bg-card p-5 md:p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-heading font-semibold">{r.name[0]}</div>
+                      <div>
+                        <span className="text-sm font-medium text-foreground">{r.name}</span>
+                        <div className="flex mt-0.5">{Array.from({ length: r.rating }).map((_, j) => <Star key={j} className="h-3 w-3 text-primary fill-primary" />)}</div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{r.text}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
