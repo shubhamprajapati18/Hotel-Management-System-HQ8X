@@ -86,6 +86,39 @@ export type Database = {
         }
         Relationships: []
       }
+      service_requests: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          status: string
+          type: string
+          urgency: string | null
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          type: string
+          urgency?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          type?: string
+          urgency?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
