@@ -1,6 +1,7 @@
 import { GuestNav } from "@/components/GuestNav";
 import { motion } from "framer-motion";
 import { Clock, MapPin, Star, UtensilsCrossed, Wine, Coffee, Cake } from "lucide-react";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 const restaurants = [
