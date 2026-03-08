@@ -250,7 +250,7 @@ export default function AdminReservations() {
                 {/* Stay Details */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Stay Details</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="flex items-center gap-2">
                       <BedDouble className="h-4 w-4 text-muted-foreground" />
                       <div>
