@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { CalendarDays, Bell, CreditCard, User, Bed, ConciergeBell, Wrench, SprayCan, Clock, ChevronRight, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatINR } from "@/lib/formatCurrency";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -190,7 +191,7 @@ export default function GuestDashboard() {
                             <span className={cn("px-3 py-1 rounded-full text-[10px] tracking-wider uppercase font-medium border", statusColor[displayStatus] || statusColor.Confirmed)}>
                               {displayStatus}
                             </span>
-                            <span className="text-lg font-heading font-semibold text-primary">₹{Number(b.total_price)}</span>
+                            <span className="text-lg font-heading font-semibold text-primary">{formatINR(b.total_price)}</span>
                             {(displayStatus === "Upcoming" || displayStatus === "Confirmed") && (
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>

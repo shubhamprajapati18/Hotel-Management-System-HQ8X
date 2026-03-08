@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
+import { formatINR } from "@/lib/formatCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -104,7 +105,7 @@ export function AdminManualBooking() {
                 <SelectTrigger><SelectValue placeholder="Select a room" /></SelectTrigger>
                 <SelectContent>
                   {rooms.map((r) => (
-                    <SelectItem key={r.id} value={r.id}>{r.name} — ₹{r.price}/night ({r.category})</SelectItem>
+                    <SelectItem key={r.id} value={r.id}>{r.name} — {formatINR(r.price)}/night ({r.category})</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -142,8 +143,8 @@ export function AdminManualBooking() {
 
             {totalPrice > 0 && (
               <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm">
-                <span className="text-muted-foreground">{nights} night{nights > 1 ? "s" : ""} × ₹{selectedRoom?.price}/night = </span>
-                <span className="font-semibold text-primary">₹{totalPrice.toLocaleString()}</span>
+                <span className="text-muted-foreground">{nights} night{nights > 1 ? "s" : ""} × {formatINR(selectedRoom?.price || 0)}/night = </span>
+                <span className="font-semibold text-primary">{formatINR(totalPrice)}</span>
               </div>
             )}
 

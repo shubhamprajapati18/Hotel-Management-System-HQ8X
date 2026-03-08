@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { UserPlus, Loader2, Pencil, Trash2, Download, DollarSign, CheckCircle2, XCircle, History, ChevronLeft, ChevronRight } from "lucide-react";
+import { formatINR } from "@/lib/formatCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -202,7 +203,7 @@ export default function AdminStaff() {
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
-          { icon: DollarSign, value: `₹${totalMonthly.toLocaleString()}`, label: "Monthly Payroll", color: "text-primary" },
+          { icon: DollarSign, value: formatINR(totalMonthly), label: "Monthly Payroll", color: "text-primary" },
           { icon: CheckCircle2, value: paidThisMonth, label: `Paid (${format(new Date(), "MMM")})`, color: "text-accent" },
           { icon: XCircle, value: unpaidThisMonth, label: `Unpaid (${format(new Date(), "MMM")})`, color: "text-destructive" },
           { icon: UserPlus, value: staff.length, label: "Total Staff", color: "text-primary" },
@@ -261,7 +262,7 @@ export default function AdminStaff() {
                           <span className="text-foreground/80">{s.role}</span>
                           <div className="text-[10px] text-muted-foreground">{s.department} · {s.shift}</div>
                         </td>
-                        <td className="py-3 px-3 text-right font-semibold text-primary">₹{Number(s.salary).toLocaleString()}</td>
+                        <td className="py-3 px-3 text-right font-semibold text-primary">{formatINR(s.salary)}</td>
                         <td className="py-3 px-3 text-center">
                           {isPaidThisMonth ? (
                             <span className="inline-flex items-center gap-1 text-accent text-xs font-medium"><CheckCircle2 className="h-4 w-4" /> Paid</span>
@@ -328,7 +329,7 @@ export default function AdminStaff() {
                       <tr key={p.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
                         <td className="py-3 px-4 font-medium text-foreground">{member?.name || "Deleted Staff"}</td>
                         <td className="py-3 px-4 text-foreground/80">{p.month}</td>
-                        <td className="py-3 px-4 text-right font-semibold text-primary">₹{Number(p.amount).toLocaleString()}</td>
+                        <td className="py-3 px-4 text-right font-semibold text-primary">{formatINR(p.amount)}</td>
                         <td className="py-3 px-4 text-muted-foreground text-xs">{format(parseISO(p.paid_at), "MMM d, yyyy")}</td>
                         <td className="py-3 px-4 text-muted-foreground text-xs">{p.notes || "—"}</td>
                         <td className="py-3 px-4">
@@ -362,7 +363,7 @@ export default function AdminStaff() {
           <DialogHeader>
             <DialogTitle>{historyStaff?.name} — Payment History</DialogTitle>
             <DialogDescription>
-              Salary: ₹{Number(historyStaff?.salary || 0).toLocaleString()}/mo · Joined: {historyStaff?.join_date} · Pay day: {historyStaff?.pay_day}{getOrdinal(historyStaff?.pay_day || 1)}
+              Salary: {formatINR(historyStaff?.salary || 0)}/mo · Joined: {historyStaff?.join_date} · Pay day: {historyStaff?.pay_day}{getOrdinal(historyStaff?.pay_day || 1)}
             </DialogDescription>
           </DialogHeader>
 
@@ -414,7 +415,7 @@ export default function AdminStaff() {
                   <div key={p.id} className="flex items-center justify-between bg-secondary/30 rounded-lg px-3 py-2 text-sm">
                     <div>
                       <span className="font-medium text-foreground">{p.month}</span>
-                      <span className="text-muted-foreground ml-2">— ₹{Number(p.amount).toLocaleString()}</span>
+                      <span className="text-muted-foreground ml-2">— {formatINR(p.amount)}</span>
                       {p.notes && <span className="text-muted-foreground text-xs ml-2">({p.notes})</span>}
                     </div>
                     <span className="text-muted-foreground text-xs">{format(parseISO(p.paid_at), "MMM d, yyyy")}</span>

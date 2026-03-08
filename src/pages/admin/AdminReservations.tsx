@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronRight, User, Calendar, BedDouble, DollarSign, CreditCard, CheckCircle2, Clock, XCircle, AlertCircle, CalendarIcon, X, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportCSV";
+import { formatINR } from "@/lib/formatCurrency";
 import { AdminManualBooking } from "@/components/AdminManualBooking";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,7 +116,7 @@ export default function AdminReservations() {
     status: b.status,
     paymentStatus: b.payment_status || "pending",
     amount: Number(b.total_price),
-    amountFormatted: `₹${Number(b.total_price).toLocaleString()}`,
+    amountFormatted: formatINR(b.total_price),
     guests: b.guests,
     specialRequests: b.special_requests,
     createdAt: format(parseISO(b.created_at), "MMM d, yyyy 'at' h:mm a"),

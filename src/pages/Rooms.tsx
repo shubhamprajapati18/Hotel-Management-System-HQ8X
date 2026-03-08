@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { GuestNav } from "@/components/GuestNav";
 import { Footer } from "@/components/Footer";
 import { rooms as staticRooms } from "@/data/rooms";
+import { formatINR } from "@/lib/formatCurrency";
 import { motion } from "framer-motion";
 import { Star, Users, Maximize2, ArrowRight, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -110,7 +111,7 @@ export default function Rooms() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-xl md:text-2xl font-heading font-semibold text-primary">₹{room.price}</span>
+                          <span className="text-xl md:text-2xl font-heading font-semibold text-primary">{formatINR(room.price)}</span>
                           <span className="text-xs text-muted-foreground ml-1">/night</span>
                         </div>
                         <span className="text-[10px] tracking-[0.15em] uppercase font-medium text-muted-foreground group-hover:text-primary transition-colors duration-300 flex items-center gap-1">

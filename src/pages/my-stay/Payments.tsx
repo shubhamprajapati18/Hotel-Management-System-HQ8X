@@ -1,6 +1,7 @@
 import { MyStayLayout } from "@/components/MyStayLayout";
 import { motion } from "framer-motion";
 import { CreditCard, Loader2 } from "lucide-react";
+import { formatINR } from "@/lib/formatCurrency";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -34,7 +35,7 @@ export default function Payments() {
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 md:p-6 mb-6 flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground tracking-wider uppercase">Total Spent</p>
-            <p className="font-heading text-2xl md:text-3xl font-semibold text-primary mt-1">₹{total.toLocaleString()}</p>
+            <p className="font-heading text-2xl md:text-3xl font-semibold text-primary mt-1">{formatINR(total)}</p>
           </div>
           <CreditCard className="h-8 w-8 text-primary/30" />
         </div>
@@ -60,7 +61,7 @@ export default function Payments() {
                   {b.status === "cancelled" ? "Refunded" : "Paid"}
                 </span>
                 <span className={`text-sm font-heading font-semibold text-right ${b.status === "cancelled" ? "text-muted-foreground line-through" : "text-foreground"}`}>
-                  ₹{Number(b.total_price)}
+                  {formatINR(b.total_price)}
                 </span>
               </div>
             ))}

@@ -1,6 +1,7 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { motion } from "framer-motion";
 import { DollarSign, Loader2, Download } from "lucide-react";
+import { formatINR } from "@/lib/formatCurrency";
 import { Button } from "@/components/ui/button";
 import { exportToCSV } from "@/lib/exportCSV";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,10 +58,10 @@ export default function AdminPayments() {
     .reduce((s, b) => s + Number(b.total_price), 0);
 
   const kpis = [
-    { label: "Today", value: `₹${revenueToday.toLocaleString()}` },
-    { label: "This Week", value: `₹${revenueWeek.toLocaleString()}` },
-    { label: "This Month", value: `₹${revenueMonth.toLocaleString()}` },
-    { label: "Pending", value: `₹${pending.toLocaleString()}` },
+    { label: "Today", value: formatINR(revenueToday) },
+    { label: "This Week", value: formatINR(revenueWeek) },
+    { label: "This Month", value: formatINR(revenueMonth) },
+    { label: "Pending", value: formatINR(pending) },
   ];
 
   return (
@@ -149,7 +150,7 @@ export default function AdminPayments() {
                     </span>
                   </td>
                   <td className={`py-3 px-4 text-right font-semibold ${b.status === "cancelled" ? "text-destructive" : "text-primary"}`}>
-                    ₹{Number(b.total_price).toLocaleString()}
+                    {formatINR(b.total_price)}
                   </td>
                   <td className="py-3 px-4 text-right text-muted-foreground text-xs">
                     {format(parseISO(b.created_at), "MMM d, yyyy")}
