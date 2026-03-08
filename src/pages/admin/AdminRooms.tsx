@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Plus, Edit, Trash2, Upload, ImageIcon } from "lucide-react";
+import { Plus, Edit, Trash2, Upload, ImageIcon, X } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -43,14 +43,29 @@ export default function AdminRooms() {
   const [editingRoom, setEditingRoom] = useState<string | null>(null);
   const [deletingRoom, setDeletingRoom] = useState<{ id: string; name: string } | null>(null);
   const [form, setForm] = useState<RoomFormData>(defaultForm);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
+  const [existingGalleryImages, setExistingGalleryImages] = useState<{ id: string; image_url: string; sort_order: number }[]>([]);
+  const [removedGalleryIds, setRemovedGalleryIds] = useState<string[]>([]);
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const { data: dbRooms = [], isLoading } = useQuery({
     queryKey: ["admin-rooms"],
     queryFn: async () => {
       const { data, error } = await supabase.from("rooms").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch gallery images for all rooms
+  const { data: allGalleryImages = [] } = useQuery({
+    queryKey: ["admin-room-images"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("room_images").select("*").order("sort_order");
       if (error) throw error;
       return data;
     },
@@ -67,9 +82,9 @@ export default function AdminRooms() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      let imageUrl = imagePreview;
-      if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
+      let imageUrl = thumbnailPreview;
+      if (thumbnailFile) {
+        imageUrl = await uploadImage(thumbnailFile);
       }
 
       const payload = {
@@ -84,16 +99,38 @@ export default function AdminRooms() {
         status: form.status,
       };
 
+      let roomId = editingRoom;
+
       if (editingRoom) {
         const { error } = await supabase.from("rooms").update(payload).eq("id", editingRoom);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("rooms").insert(payload);
+        const { data, error } = await supabase.from("rooms").insert(payload).select().single();
+        if (error) throw error;
+        roomId = data.id;
+      }
+
+      // Delete removed gallery images
+      if (removedGalleryIds.length > 0) {
+        await supabase.from("room_images").delete().in("id", removedGalleryIds);
+      }
+
+      // Upload new gallery images
+      if (galleryFiles.length > 0 && roomId) {
+        const existingCount = existingGalleryImages.length - removedGalleryIds.length;
+        const uploads = await Promise.all(galleryFiles.map((f) => uploadImage(f)));
+        const inserts = uploads.map((url, i) => ({
+          room_id: roomId!,
+          image_url: url,
+          sort_order: existingCount + i,
+        }));
+        const { error } = await supabase.from("room_images").insert(inserts);
         if (error) throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-rooms"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-room-images"] });
       toast.success(editingRoom ? "Room updated" : "Room created");
       closeDialog();
     },
@@ -107,6 +144,7 @@ export default function AdminRooms() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-rooms"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-room-images"] });
       toast.success("Room deleted");
       setDeleteDialogOpen(false);
       setDeletingRoom(null);
@@ -147,7 +185,6 @@ export default function AdminRooms() {
   };
 
   const handleDeleteStatic = async (staticRoom: typeof staticRooms[0]) => {
-    // Import then delete
     try {
       const data = await importToDbMutation.mutateAsync(staticRoom);
       setDeletingRoom({ id: data.id, name: data.name });
@@ -158,8 +195,12 @@ export default function AdminRooms() {
   const openCreate = () => {
     setEditingRoom(null);
     setForm(defaultForm);
-    setImageFile(null);
-    setImagePreview(null);
+    setThumbnailFile(null);
+    setThumbnailPreview(null);
+    setGalleryFiles([]);
+    setGalleryPreviews([]);
+    setExistingGalleryImages([]);
+    setRemovedGalleryIds([]);
     setDialogOpen(true);
   };
 
@@ -175,8 +216,13 @@ export default function AdminRooms() {
       amenities: (room.amenities || []).join(", "),
       status: room.status,
     });
-    setImageFile(null);
-    setImagePreview(room.image_url || null);
+    setThumbnailFile(null);
+    setThumbnailPreview(room.image_url || null);
+    setGalleryFiles([]);
+    setGalleryPreviews([]);
+    const roomGallery = allGalleryImages.filter((img) => img.room_id === room.id);
+    setExistingGalleryImages(roomGallery);
+    setRemovedGalleryIds([]);
     setDialogOpen(true);
   };
 
@@ -184,17 +230,47 @@ export default function AdminRooms() {
     setDialogOpen(false);
     setEditingRoom(null);
     setForm(defaultForm);
-    setImageFile(null);
-    setImagePreview(null);
+    setThumbnailFile(null);
+    setThumbnailPreview(null);
+    setGalleryFiles([]);
+    setGalleryPreviews([]);
+    setExistingGalleryImages([]);
+    setRemovedGalleryIds([]);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      setThumbnailFile(file);
+      setThumbnailPreview(URL.createObjectURL(file));
     }
   };
+
+  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const activeExisting = existingGalleryImages.length - removedGalleryIds.length;
+    const totalAllowed = 10 - activeExisting - galleryFiles.length;
+    const toAdd = files.slice(0, Math.max(0, totalAllowed));
+    if (toAdd.length < files.length) {
+      toast.error(`Maximum 10 gallery images allowed. Only ${toAdd.length} added.`);
+    }
+    setGalleryFiles((prev) => [...prev, ...toAdd]);
+    setGalleryPreviews((prev) => [...prev, ...toAdd.map((f) => URL.createObjectURL(f))]);
+    // Reset input so same file can be selected again
+    e.target.value = "";
+  };
+
+  const removeNewGalleryImage = (index: number) => {
+    setGalleryFiles((prev) => prev.filter((_, i) => i !== index));
+    setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingGalleryImage = (id: string) => {
+    setRemovedGalleryIds((prev) => [...prev, id]);
+  };
+
+  const activeExistingImages = existingGalleryImages.filter((img) => !removedGalleryIds.includes(img.id));
+  const totalGalleryCount = activeExistingImages.length + galleryFiles.length;
 
   const allRooms = [
     ...dbRooms.map((r) => ({
@@ -210,6 +286,7 @@ export default function AdminRooms() {
       status: r.status,
       isDb: true as const,
       raw: r,
+      galleryCount: allGalleryImages.filter((img) => img.room_id === r.id).length,
     })),
     ...staticRooms.map((r) => ({
       id: r.id,
@@ -224,6 +301,7 @@ export default function AdminRooms() {
       status: "available",
       isDb: false as const,
       raw: null as any,
+      galleryCount: 0,
     })),
   ];
 
@@ -252,6 +330,11 @@ export default function AdminRooms() {
                   <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center"><ImageIcon className="h-12 w-12 text-muted-foreground/30" /></div>
+                )}
+                {room.galleryCount > 0 && (
+                  <span className="absolute bottom-2 left-2 text-[10px] bg-black/60 text-white px-2 py-0.5 rounded-full">
+                    +{room.galleryCount} photos
+                  </span>
                 )}
                 <div className="absolute top-3 right-3 flex gap-1.5">
                   {room.isDb ? (
@@ -299,30 +382,71 @@ export default function AdminRooms() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={(open) => !open && closeDialog()}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingRoom ? "Edit Room" : "Add New Room"}</DialogTitle>
-            <DialogDescription>{editingRoom ? "Update room details and image." : "Fill in the details for the new room."}</DialogDescription>
+            <DialogDescription>{editingRoom ? "Update room details, thumbnail and gallery images." : "Fill in the details for the new room."}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 mt-2">
-            {/* Image Upload */}
+            {/* Thumbnail Upload */}
             <div>
-              <Label>Room Image</Label>
+              <Label className="text-sm font-medium">Thumbnail (Cover Image)</Label>
               <div
                 className="mt-1 border-2 border-dashed border-border rounded-xl p-4 text-center cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => thumbnailInputRef.current?.click()}
               >
-                {imagePreview ? (
-                  <img src={imagePreview} alt="Preview" className="w-full h-32 object-cover rounded-lg" />
+                {thumbnailPreview ? (
+                  <img src={thumbnailPreview} alt="Thumbnail" className="w-full h-32 object-cover rounded-lg" />
                 ) : (
                   <div className="flex flex-col items-center gap-2 py-4">
                     <Upload className="h-8 w-8 text-muted-foreground/50" />
-                    <p className="text-sm text-muted-foreground">Click to upload an image</p>
+                    <p className="text-sm text-muted-foreground">Click to upload thumbnail</p>
                   </div>
                 )}
               </div>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+              <input ref={thumbnailInputRef} type="file" accept="image/*" className="hidden" onChange={handleThumbnailChange} />
+            </div>
+
+            {/* Gallery Upload */}
+            <div>
+              <Label className="text-sm font-medium">Gallery Images ({totalGalleryCount}/10)</Label>
+              <div className="mt-1 grid grid-cols-5 gap-2">
+                {activeExistingImages.map((img) => (
+                  <div key={img.id} className="relative group h-20 rounded-lg overflow-hidden border border-border">
+                    <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeExistingGalleryImage(img.id)}
+                      className="absolute top-1 right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                {galleryPreviews.map((url, i) => (
+                  <div key={`new-${i}`} className="relative group h-20 rounded-lg overflow-hidden border border-border">
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeNewGalleryImage(i)}
+                      className="absolute top-1 right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                {totalGalleryCount < 10 && (
+                  <div
+                    className="h-20 rounded-lg border-2 border-dashed border-border flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors"
+                    onClick={() => galleryInputRef.current?.click()}
+                  >
+                    <Plus className="h-5 w-5 text-muted-foreground/50" />
+                  </div>
+                )}
+              </div>
+              <input ref={galleryInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryChange} />
+              <p className="text-xs text-muted-foreground mt-1">Upload up to 10 gallery images. These will be shown in the room detail lightbox.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

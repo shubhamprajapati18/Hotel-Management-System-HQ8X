@@ -3,7 +3,7 @@ import { GuestNav } from "@/components/GuestNav";
 import { Button } from "@/components/ui/button";
 import { rooms as staticRooms } from "@/data/rooms";
 import { motion } from "framer-motion";
-import { Star, Users, Maximize2, Check, ArrowLeft, CalendarDays, Loader2, ImageIcon } from "lucide-react";
+import { Star, Users, Maximize2, Check, ArrowLeft, CalendarDays, Loader2, ImageIcon, Camera } from "lucide-react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
+import { RoomImageLightbox } from "@/components/RoomImageLightbox";
 
 interface DisplayRoom {
   id: string;
@@ -39,18 +40,30 @@ export default function RoomDetail() {
   const [guests, setGuests] = useState("1");
   const [specialRequests, setSpecialRequests] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Check static rooms first
   const staticRoom = staticRooms.find((r) => r.id === id);
-
-  // Check DB rooms if id starts with "db-"
   const dbId = id?.startsWith("db-") ? id.slice(3) : null;
+
   const { data: dbRoom } = useQuery({
     queryKey: ["room-detail", dbId],
     queryFn: async () => {
       if (!dbId) return null;
       const { data, error } = await supabase.from("rooms").select("*").eq("id", dbId).single();
       if (error) return null;
+      return data;
+    },
+    enabled: !!dbId,
+  });
+
+  // Fetch gallery images for this room
+  const { data: galleryImages = [] } = useQuery({
+    queryKey: ["room-gallery", dbId],
+    queryFn: async () => {
+      if (!dbId) return [];
+      const { data, error } = await supabase.from("room_images").select("*").eq("room_id", dbId).order("sort_order");
+      if (error) return [];
       return data;
     },
     enabled: !!dbId,
@@ -74,6 +87,11 @@ export default function RoomDetail() {
       }
     : null;
 
+  // Build all images array: thumbnail first, then gallery
+  const allImages: string[] = [];
+  if (room?.image) allImages.push(room.image);
+  galleryImages.forEach((img) => allImages.push(img.image_url));
+
   if (!room) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -86,42 +104,68 @@ export default function RoomDetail() {
   const subtotal = room.price * nights;
   const serviceFee = Math.round(subtotal * 0.1);
   const total = subtotal + serviceFee;
-
   const actualRoomId = room.id.startsWith("db-") ? room.id.slice(3) : room.id;
 
   const handleBooking = async () => {
     if (!checkIn || !checkOut) { toast.error("Please select check-in and check-out dates"); return; }
     if (!user) { toast.error("Please sign in to book a room"); navigate("/login"); return; }
-
     setIsSubmitting(true);
     const { error } = await supabase.from("bookings").insert({
-      user_id: user.id,
-      room_id: actualRoomId,
-      room_name: room.name,
-      check_in: format(checkIn, "yyyy-MM-dd"),
-      check_out: format(checkOut, "yyyy-MM-dd"),
-      guests: parseInt(guests),
-      special_requests: specialRequests.trim() || null,
-      total_price: total,
+      user_id: user.id, room_id: actualRoomId, room_name: room.name,
+      check_in: format(checkIn, "yyyy-MM-dd"), check_out: format(checkOut, "yyyy-MM-dd"),
+      guests: parseInt(guests), special_requests: specialRequests.trim() || null, total_price: total,
     });
-
     setIsSubmitting(false);
     if (error) { toast.error("Booking failed. Please try again."); return; }
     toast.success("Booking confirmed! Redirecting to My Stay...");
     setTimeout(() => navigate("/my-stay"), 1500);
   };
 
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <GuestNav />
       <div className="pt-24">
-        <div className="relative h-[45vh] md:h-[55vh] lg:h-[65vh] overflow-hidden bg-secondary">
+        {/* Hero Image */}
+        <div
+          className="relative h-[45vh] md:h-[55vh] lg:h-[65vh] overflow-hidden bg-secondary cursor-pointer"
+          onClick={() => allImages.length > 0 && openLightbox(0)}
+        >
           {room.image ? (
             <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center"><ImageIcon className="h-20 w-20 text-muted-foreground/20" /></div>
           )}
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, hsla(240,10%,10%,0.05) 0%, hsla(240,10%,10%,0.75) 100%)" }} />
+
+          {/* Gallery thumbnail strip */}
+          {allImages.length > 1 && (
+            <div className="absolute bottom-20 md:bottom-24 right-5 md:right-6 z-10 flex items-center gap-2">
+              {allImages.slice(1, 4).map((img, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); openLightbox(i + 1); }}
+                  className="w-14 h-10 md:w-16 md:h-12 rounded-lg overflow-hidden border-2 border-white/30 hover:border-white/70 transition-all"
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+              {allImages.length > 4 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); openLightbox(0); }}
+                  className="w-14 h-10 md:w-16 md:h-12 rounded-lg bg-black/50 border-2 border-white/30 hover:border-white/70 transition-all flex items-center justify-center"
+                >
+                  <Camera className="h-4 w-4 text-white mr-1" />
+                  <span className="text-white text-xs font-medium">+{allImages.length - 4}</span>
+                </button>
+              )}
+            </div>
+          )}
+
           <div className="absolute bottom-8 md:bottom-10 left-0 right-0 z-10 px-5 md:px-6">
             <div className="container mx-auto max-w-6xl">
               <Link to="/rooms" className="inline-flex items-center text-[11px] tracking-[0.15em] uppercase text-white/50 hover:text-white transition-colors duration-300 mb-4">
@@ -132,6 +176,11 @@ export default function RoomDetail() {
                 {room.size && <span className="flex items-center gap-1.5"><Maximize2 className="h-3.5 w-3.5" />{room.size}</span>}
                 <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" />{room.capacity} Guests</span>
                 {room.rating > 0 && <span className="flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-gold-light fill-gold-light" />{room.rating} ({room.reviews} reviews)</span>}
+                {allImages.length > 1 && (
+                  <button onClick={(e) => { e.stopPropagation(); openLightbox(0); }} className="flex items-center gap-1.5 hover:text-white transition-colors">
+                    <Camera className="h-3.5 w-3.5" />{allImages.length} Photos
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -144,6 +193,29 @@ export default function RoomDetail() {
                 <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-4 tracking-tight">The Experience</h2>
                 <p className="text-muted-foreground leading-[1.8] text-[15px]">{room.description}</p>
               </motion.div>
+
+              {/* Photo Grid */}
+              {allImages.length > 1 && (
+                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.6 }}>
+                  <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-5 tracking-tight">Photos</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {allImages.slice(0, 6).map((img, i) => (
+                      <button
+                        key={i}
+                        onClick={() => openLightbox(i)}
+                        className="relative rounded-xl overflow-hidden aspect-[4/3] group"
+                      >
+                        <img src={img} alt={`${room.name} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        {i === 5 && allImages.length > 6 && (
+                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                            <span className="text-white font-heading text-lg">+{allImages.length - 6} more</span>
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
 
               <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.6 }}>
                 <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-5 tracking-tight">Amenities</h2>
@@ -245,6 +317,8 @@ export default function RoomDetail() {
           </div>
         </div>
       </div>
+
+      <RoomImageLightbox images={allImages} initialIndex={lightboxIndex} open={lightboxOpen} onOpenChange={setLightboxOpen} />
     </div>
   );
 }
