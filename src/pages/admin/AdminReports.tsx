@@ -67,11 +67,11 @@ export default function AdminReports() {
           <h3 className="font-heading text-lg font-semibold text-foreground mb-4">RevPAR Trend</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={revPAR}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 4% 20%)" />
-              <XAxis dataKey="month" stroke="hsl(220 9% 56%)" fontSize={12} />
-              <YAxis stroke="hsl(220 9% 56%)" fontSize={12} tickFormatter={(v) => `$${v}`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `$${v}`} />
               <Tooltip contentStyle={chartStyle} />
-              <Line type="monotone" dataKey="value" stroke="hsl(142 71% 45%)" strokeWidth={2} dot={{ fill: "hsl(142 71% 45%)" }} />
+              <Line type="monotone" dataKey="value" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ fill: "hsl(var(--accent))" }} />
             </LineChart>
           </ResponsiveContainer>
         </motion.div>
