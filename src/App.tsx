@@ -17,6 +17,7 @@ import PaymentsPage from "./pages/my-stay/Payments";
 import NotificationsPage from "./pages/my-stay/Notifications";
 import ProfilePage from "./pages/my-stay/Profile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminServiceRequests from "./pages/admin/AdminServiceRequests";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminRooms from "./pages/admin/AdminRooms";
 import AdminHousekeeping from "./pages/admin/AdminHousekeeping";
