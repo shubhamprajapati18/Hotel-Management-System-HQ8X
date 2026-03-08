@@ -363,7 +363,7 @@ export default function AdminStaff() {
           <DialogHeader>
             <DialogTitle>{historyStaff?.name} — Payment History</DialogTitle>
             <DialogDescription>
-              Salary: ₹{Number(historyStaff?.salary || 0).toLocaleString()}/mo · Joined: {historyStaff?.join_date} · Pay day: {historyStaff?.pay_day}{getOrdinal(historyStaff?.pay_day || 1)}
+              Salary: {formatINR(historyStaff?.salary || 0)}/mo · Joined: {historyStaff?.join_date} · Pay day: {historyStaff?.pay_day}{getOrdinal(historyStaff?.pay_day || 1)}
             </DialogDescription>
           </DialogHeader>
 
