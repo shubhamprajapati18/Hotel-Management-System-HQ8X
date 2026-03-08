@@ -74,7 +74,7 @@ export default function AdminDashboard() {
   const kpis = [
     { label: "Total Bookings", value: totalBookings.toLocaleString(), change: "", icon: CalendarCheck },
     { label: "Occupancy Rate", value: `${occupancyRate}%`, change: "", icon: BedDouble, emerald: true },
-    { label: "Revenue Today", value: `$${todayRevenue.toLocaleString()}`, change: "", icon: DollarSign },
+    { label: "Revenue Today", value: `₹${todayRevenue.toLocaleString()}`, change: "", icon: DollarSign },
     { label: "Available Rooms", value: String(availableRooms), change: "", icon: BedDouble },
     { label: "Pending Tasks", value: String(pendingTasks), change: "", icon: SprayCan, destructive: pendingTasks > 0 },
     { label: "Upcoming Check-ins", value: String(upcomingCheckins), change: "", icon: Users, emerald: true },
