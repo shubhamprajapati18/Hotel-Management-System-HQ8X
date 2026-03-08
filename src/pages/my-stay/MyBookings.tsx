@@ -2,7 +2,7 @@ import { MyStayLayout } from "@/components/MyStayLayout";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { CalendarDays, Bed, Loader2, X, ChevronRight } from "lucide-react";
+import { CalendarDays, Bed, Loader2, X, ChevronRight, Star, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatINR } from "@/lib/formatCurrency";
@@ -14,6 +14,9 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ReviewForm } from "@/components/ReviewForm";
+import { useState } from "react";
 
 type Booking = {
   id: string; room_name: string; check_in: string; check_out: string;
