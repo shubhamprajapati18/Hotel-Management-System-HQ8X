@@ -161,7 +161,7 @@ export default function AdminServiceRequests() {
                 <div key={r.id} className="grid md:grid-cols-[1fr_120px_120px_100px_140px_140px] gap-2 md:gap-3 px-5 py-4 border-b border-border last:border-0 items-center">
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">{r.description || r.category}</p>
-                    <p className="text-xs text-muted-foreground truncate">User: {r.user_id.slice(0, 8)}…</p>
+                    <p className="text-xs text-muted-foreground truncate">{r.guest_name}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Icon className="h-3.5 w-3.5 text-primary/60" />
