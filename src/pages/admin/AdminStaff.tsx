@@ -203,7 +203,7 @@ export default function AdminStaff() {
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
-          { icon: DollarSign, value: `₹${totalMonthly.toLocaleString()}`, label: "Monthly Payroll", color: "text-primary" },
+          { icon: DollarSign, value: formatINR(totalMonthly), label: "Monthly Payroll", color: "text-primary" },
           { icon: CheckCircle2, value: paidThisMonth, label: `Paid (${format(new Date(), "MMM")})`, color: "text-accent" },
           { icon: XCircle, value: unpaidThisMonth, label: `Unpaid (${format(new Date(), "MMM")})`, color: "text-destructive" },
           { icon: UserPlus, value: staff.length, label: "Total Staff", color: "text-primary" },
