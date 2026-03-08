@@ -44,7 +44,9 @@ const statusColor: Record<string, string> = {
 export default function MyBookings() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [reviewBooking, setReviewBooking] = useState<Booking | null>(null);
 
+  // Fetch bookings
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["my-bookings", user?.id],
     queryFn: async () => {
