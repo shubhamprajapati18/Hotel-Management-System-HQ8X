@@ -18,6 +18,11 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import AdminStaff from "./pages/admin/AdminStaff";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminGuests from "./pages/admin/AdminGuests";
+import Amenities from "./pages/Amenities";
+import Dining from "./pages/Dining";
+import Experiences from "./pages/Experiences";
+import Offers from "./pages/Offers";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +36,11 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/rooms" element={<Rooms />} />
+          <Route path="/amenities" element={<Amenities />} />
+          <Route path="/dining" element={<Dining />} />
+          <Route path="/experiences" element={<Experiences />} />
+          <Route path="/offers" element={<Offers />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/rooms/:id" element={<RoomDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/my-stay" element={<GuestDashboard />} />
