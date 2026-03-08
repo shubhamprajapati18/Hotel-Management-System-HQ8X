@@ -147,6 +147,14 @@ export default function MyBookings() {
                         </AlertDialogContent>
                       </AlertDialog>
                     )}
+                    {displayStatus === "Completed" && !myReviews.includes(b.id) && (
+                      <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-8 w-8" title="Leave a review" onClick={() => setReviewBooking(b)}>
+                        <MessageSquare className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {displayStatus === "Completed" && myReviews.includes(b.id) && (
+                      <span className="flex items-center gap-1 text-xs text-accent"><Star className="h-3 w-3 fill-accent" />Reviewed</span>
+                    )}
                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-8 w-8" asChild>
                       <Link to={`/rooms/${b.room_name}`}><ChevronRight className="h-4 w-4" /></Link>
                     </Button>
@@ -157,6 +165,24 @@ export default function MyBookings() {
           </div>
         )}
       </motion.div>
+
+      {/* Review Dialog */}
+      <Dialog open={!!reviewBooking} onOpenChange={(open) => !open && setReviewBooking(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Review Your Stay</DialogTitle>
+            <DialogDescription>{reviewBooking?.room_name} — {reviewBooking && format(parseISO(reviewBooking.check_in), "MMM d")} to {reviewBooking && format(parseISO(reviewBooking.check_out), "MMM d, yyyy")}</DialogDescription>
+          </DialogHeader>
+          {reviewBooking && (
+            <ReviewForm
+              bookingId={reviewBooking.id}
+              roomId={reviewBooking.id}
+              roomName={reviewBooking.room_name}
+              onComplete={() => setReviewBooking(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </MyStayLayout>
   );
 }
