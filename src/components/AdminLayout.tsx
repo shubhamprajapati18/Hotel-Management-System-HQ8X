@@ -10,6 +10,9 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
   { label: "Reservations", icon: CalendarDays, path: "/admin/reservations" },
+  { label: "Booking Calendar", icon: CalendarRange, path: "/admin/booking-calendar" },
+  { label: "Group Bookings", icon: UsersRound, path: "/admin/group-reservations" },
+  { label: "Waitlist", icon: ListChecks, path: "/admin/waitlist" },
   { label: "Rooms", icon: BedDouble, path: "/admin/rooms" },
   { label: "Guests", icon: Users, path: "/admin/guests" },
   { label: "Housekeeping", icon: SprayCan, path: "/admin/housekeeping" },
