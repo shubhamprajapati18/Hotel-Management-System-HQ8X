@@ -2,13 +2,24 @@ import { GuestNav } from "@/components/GuestNav";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { CalendarDays, Bell, CreditCard, User, Bed, ConciergeBell, Wrench, SprayCan, Clock, ChevronRight, Loader2 } from "lucide-react";
+import { CalendarDays, Bell, CreditCard, User, Bed, ConciergeBell, Wrench, SprayCan, Clock, ChevronRight, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO, isBefore, isAfter, isWithinInterval } from "date-fns";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Booking = {
   id: string;
@@ -57,6 +68,7 @@ const sideNav = [
 
 export default function GuestDashboard() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["my-bookings", user?.id],
@@ -70,6 +82,24 @@ export default function GuestDashboard() {
       return data as Booking[];
     },
     enabled: !!user,
+  });
+
+  const cancelBooking = useMutation({
+    mutationFn: async (bookingId: string) => {
+      const { error } = await supabase
+        .from("bookings")
+        .update({ status: "cancelled" })
+        .eq("id", bookingId)
+        .eq("user_id", user!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-bookings"] });
+      toast.success("Booking cancelled successfully.");
+    },
+    onError: () => {
+      toast.error("Failed to cancel booking. Please try again.");
+    },
   });
 
   return (
@@ -161,6 +191,32 @@ export default function GuestDashboard() {
                               {displayStatus}
                             </span>
                             <span className="text-lg font-heading font-semibold text-primary">${Number(b.total_price)}</span>
+                            {(displayStatus === "Upcoming" || displayStatus === "Confirmed") && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8">
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to cancel your reservation at <strong>{b.room_name}</strong> ({format(parseISO(b.check_in), "MMM d")} – {format(parseISO(b.check_out), "MMM d, yyyy")})? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Keep Booking</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => cancelBooking.mutate(b.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Cancel Booking
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
                             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-8 w-8" asChild>
                               <Link to={`/rooms/${b.room_name}`}>
                                 <ChevronRight className="h-4 w-4" />
