@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, CalendarDays, BedDouble, Users, SprayCan, Wrench,
-  CreditCard, BarChart3, UserCog, Settings, LogOut, ChevronLeft, Menu, Moon, Sun, ConciergeBell, Gift,
+  CreditCard, BarChart3, UserCog, Settings, LogOut, ChevronLeft, Menu, Moon, Sun, ConciergeBell, Gift, UtensilsCrossed, MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,8 @@ const navItems = [
   { label: "Maintenance", icon: Wrench, path: "/admin/maintenance" },
   { label: "Payments", icon: CreditCard, path: "/admin/payments" },
   { label: "Offers", icon: Gift, path: "/admin/offers" },
+  { label: "Dining", icon: UtensilsCrossed, path: "/admin/dining" },
+  { label: "Contact Msgs", icon: MessageSquare, path: "/admin/contact-submissions" },
   { label: "Reports", icon: BarChart3, path: "/admin/reports" },
   { label: "Staff", icon: UserCog, path: "/admin/staff" },
   { label: "Settings", icon: Settings, path: "/admin/settings" },
