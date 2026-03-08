@@ -2,7 +2,8 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronRight, User, Calendar, BedDouble, DollarSign, CreditCard, CheckCircle2, Clock, XCircle, AlertCircle, CalendarIcon, X } from "lucide-react";
+import { Search, ChevronRight, User, Calendar, BedDouble, DollarSign, CreditCard, CheckCircle2, Clock, XCircle, AlertCircle, CalendarIcon, X, Download } from "lucide-react";
+import { exportToCSV } from "@/lib/exportCSV";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -215,7 +216,32 @@ export default function AdminReservations() {
             </Button>
           )}
 
-          <span className="text-xs text-muted-foreground ml-auto">{filtered.length} results</span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-auto"
+            onClick={() => {
+              const csvData = filtered.map((r) => ({
+                ID: r.id,
+                Guest: r.guest,
+                Room: r.room,
+                "Check-in": r.checkInFormatted,
+                "Check-out": r.checkOutFormatted,
+                Status: r.status,
+                Payment: r.paymentStatus,
+                Amount: r.amount,
+                Guests: r.guests,
+                "Special Requests": r.specialRequests || "",
+                "Created At": r.createdAt,
+              }));
+              exportToCSV(csvData, `reservations-${format(new Date(), "yyyy-MM-dd")}`);
+              toast.success(`Exported ${csvData.length} reservations`);
+            }}
+          >
+            <Download className="h-4 w-4 mr-2" /> Export CSV
+          </Button>
+
+          <span className="text-xs text-muted-foreground">{filtered.length} results</span>
         </div>
       </motion.div>
 
