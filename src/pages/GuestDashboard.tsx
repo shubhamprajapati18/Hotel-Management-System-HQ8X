@@ -191,7 +191,7 @@ export default function GuestDashboard() {
                             <span className={cn("px-3 py-1 rounded-full text-[10px] tracking-wider uppercase font-medium border", statusColor[displayStatus] || statusColor.Confirmed)}>
                               {displayStatus}
                             </span>
-                            <span className="text-lg font-heading font-semibold text-primary">₹{Number(b.total_price)}</span>
+                            <span className="text-lg font-heading font-semibold text-primary">{formatINR(b.total_price)}</span>
                             {(displayStatus === "Upcoming" || displayStatus === "Confirmed") && (
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>

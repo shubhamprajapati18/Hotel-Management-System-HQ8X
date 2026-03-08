@@ -304,9 +304,9 @@ export default function RoomDetail() {
 
                 {nights > 0 && (
                   <div className="border-t border-border pt-4 mb-5 space-y-2.5 text-sm">
-                    <div className="flex justify-between text-muted-foreground"><span>₹{room.price} × {nights} nights</span><span>₹{subtotal}</span></div>
-                    <div className="flex justify-between text-muted-foreground"><span>Service fee</span><span>₹{serviceFee}</span></div>
-                    <div className="flex justify-between font-medium text-foreground pt-3 border-t border-border"><span>Total</span><span className="text-primary font-heading text-lg">₹{total}</span></div>
+                    <div className="flex justify-between text-muted-foreground"><span>{formatINR(room.price)} × {nights} nights</span><span>{formatINR(subtotal)}</span></div>
+                    <div className="flex justify-between text-muted-foreground"><span>Service fee</span><span>{formatINR(serviceFee)}</span></div>
+                    <div className="flex justify-between font-medium text-foreground pt-3 border-t border-border"><span>Total</span><span className="text-primary font-heading text-lg">{formatINR(total)}</span></div>
                   </div>
                 )}
 

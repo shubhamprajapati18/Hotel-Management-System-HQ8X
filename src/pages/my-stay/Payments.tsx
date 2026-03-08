@@ -61,7 +61,7 @@ export default function Payments() {
                   {b.status === "cancelled" ? "Refunded" : "Paid"}
                 </span>
                 <span className={`text-sm font-heading font-semibold text-right ${b.status === "cancelled" ? "text-muted-foreground line-through" : "text-foreground"}`}>
-                  ₹{Number(b.total_price)}
+                  {formatINR(b.total_price)}
                 </span>
               </div>
             ))}
