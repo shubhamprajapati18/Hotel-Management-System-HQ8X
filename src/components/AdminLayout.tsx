@@ -3,12 +3,16 @@ import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, CalendarDays, BedDouble, Users, SprayCan, Wrench,
   CreditCard, BarChart3, UserCog, Settings, LogOut, ChevronLeft, Menu, Moon, Sun, ConciergeBell, Gift, UtensilsCrossed, MessageSquare,
+  CalendarRange, UsersRound, ListChecks,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
   { label: "Reservations", icon: CalendarDays, path: "/admin/reservations" },
+  { label: "Booking Calendar", icon: CalendarRange, path: "/admin/booking-calendar" },
+  { label: "Group Bookings", icon: UsersRound, path: "/admin/group-reservations" },
+  { label: "Waitlist", icon: ListChecks, path: "/admin/waitlist" },
   { label: "Rooms", icon: BedDouble, path: "/admin/rooms" },
   { label: "Guests", icon: Users, path: "/admin/guests" },
   { label: "Housekeeping", icon: SprayCan, path: "/admin/housekeeping" },
