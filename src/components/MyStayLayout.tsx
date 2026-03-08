@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Bed, ConciergeBell, SprayCan, Wrench, CreditCard, Bell, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 
 const sideNav = [
   { icon: Bed, label: "My Bookings", path: "/my-stay" },
@@ -18,6 +19,7 @@ const sideNav = [
 
 export function MyStayLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const unreadCount = useUnreadNotifications();
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,6 +58,11 @@ export function MyStayLayout({ children }: { children: ReactNode }) {
                     >
                       <item.icon className="h-4 w-4" />
                       {item.label}
+                      {item.label === "Notifications" && unreadCount > 0 && (
+                        <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}
@@ -78,6 +85,11 @@ export function MyStayLayout({ children }: { children: ReactNode }) {
                     >
                       <item.icon className="h-3.5 w-3.5" />
                       {item.label}
+                      {item.label === "Notifications" && unreadCount > 0 && (
+                        <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-semibold text-primary-foreground">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}
