@@ -6,21 +6,20 @@ import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { ArrowRight, Eye, EyeOff, Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Login() {
   const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Sign In fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // Sign Up extra fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast.error("Please fill in all fields");
@@ -30,12 +29,38 @@ export default function Login() {
       toast.error("Please enter your full name");
       return;
     }
-    if (email.includes("admin")) {
-      toast.success("Welcome back, Admin!");
-      navigate("/admin");
-    } else {
-      toast.success(isSignUp ? "Account created!" : "Welcome back!");
-      navigate("/my-stay");
+
+    setLoading(true);
+
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { first_name: firstName, last_name: lastName },
+          },
+        });
+        if (error) throw error;
+        toast.success("Account created! Check your email to confirm.");
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        // Check if admin
+        const { data: isAdmin } = await supabase.rpc("has_role", {
+          _user_id: data.user.id,
+          _role: "admin",
+        });
+
+        toast.success("Welcome back!");
+        navigate(isAdmin ? "/admin" : "/my-stay");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Authentication failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,7 +129,6 @@ export default function Login() {
           transition={{ duration: 0.7 }}
           className="w-full max-w-md"
         >
-          {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8">
             <Link to="/">
               <span className="font-heading text-3xl font-semibold tracking-wide gradient-gold-text">HQ8X</span>
@@ -143,12 +167,10 @@ export default function Login() {
             )}
 
             <div>
-              <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium">
-                {isSignUp ? "Work Email" : "Email"}
-              </Label>
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium">Email</Label>
               <Input
                 type="email"
-                placeholder={isSignUp ? "you@hotel.com" : "guest@example.com"}
+                placeholder="guest@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-2 bg-secondary/50 border-border h-11 rounded-xl"
@@ -175,9 +197,20 @@ export default function Login() {
               </div>
             </div>
 
-            <Button variant="luxury" className="w-full py-6 rounded-xl text-sm tracking-wider uppercase" type="submit">
-              {isSignUp ? "Create Free Account" : "Sign In"}
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button
+              variant="luxury"
+              className="w-full py-6 rounded-xl text-sm tracking-wider uppercase"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  {isSignUp ? "Create Free Account" : "Sign In"}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
           </form>
 
@@ -198,10 +231,6 @@ export default function Login() {
               <span className="text-primary font-medium">{isSignUp ? "Sign in" : "Sign Up"}</span>
             </button>
           </div>
-
-          <p className="text-[10px] text-muted-foreground/40 text-center mt-5 tracking-wide">
-            Demo: use <span className="text-primary/70">admin@hq8x.com</span> for admin, any other for guest
-          </p>
         </motion.div>
       </div>
     </div>
