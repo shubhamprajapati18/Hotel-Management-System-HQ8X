@@ -8,7 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const typeIcon: Record<string, typeof ConciergeBell> = {
   room_service: ConciergeBell,
@@ -38,6 +38,21 @@ export default function AdminServiceRequests() {
   const queryClient = useQueryClient();
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
+
+  // Real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-service-requests-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "service_requests" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["admin-service-requests"] });
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
 
   const { data: requests = [], isLoading } = useQuery({
     queryKey: ["admin-service-requests"],
