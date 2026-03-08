@@ -54,11 +54,11 @@ export default function AdminReports() {
           <h3 className="font-heading text-lg font-semibold text-foreground mb-4">Occupancy Trend</h3>
           <ResponsiveContainer width="100%" height={250}>
             <AreaChart data={occupancyTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 4% 20%)" />
-              <XAxis dataKey="month" stroke="hsl(220 9% 56%)" fontSize={12} />
-              <YAxis stroke="hsl(220 9% 56%)" fontSize={12} tickFormatter={(v) => `${v}%`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${v}%`} />
               <Tooltip contentStyle={chartStyle} />
-              <Area type="monotone" dataKey="rate" fill="hsla(43, 76%, 52%, 0.15)" stroke="hsl(43 76% 52%)" strokeWidth={2} />
+              <Area type="monotone" dataKey="rate" fill="hsla(43, 76%, 52%, 0.15)" stroke="hsl(var(--primary))" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </motion.div>
