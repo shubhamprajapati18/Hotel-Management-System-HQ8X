@@ -1,6 +1,7 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { motion } from "framer-motion";
 import { DollarSign, Loader2, Download } from "lucide-react";
+import { formatINR } from "@/lib/formatCurrency";
 import { Button } from "@/components/ui/button";
 import { exportToCSV } from "@/lib/exportCSV";
 import { supabase } from "@/integrations/supabase/client";
