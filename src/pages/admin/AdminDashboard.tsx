@@ -1,5 +1,6 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { motion } from "framer-motion";
+import { formatINR, formatINRShort } from "@/lib/formatCurrency";
 import { Users, BedDouble, DollarSign, SprayCan, CalendarCheck } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 import { Link } from "react-router-dom";
