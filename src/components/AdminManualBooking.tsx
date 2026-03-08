@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
+import { formatINR } from "@/lib/formatCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
