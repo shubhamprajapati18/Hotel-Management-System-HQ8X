@@ -80,11 +80,11 @@ export default function AdminReports() {
           <h3 className="font-heading text-lg font-semibold text-foreground mb-4">Average Daily Rate (ADR)</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={adr}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 4% 20%)" />
-              <XAxis dataKey="month" stroke="hsl(220 9% 56%)" fontSize={12} />
-              <YAxis stroke="hsl(220 9% 56%)" fontSize={12} tickFormatter={(v) => `$${v}`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `$${v}`} />
               <Tooltip contentStyle={chartStyle} />
-              <Bar dataKey="value" fill="hsl(43 76% 52%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
