@@ -297,7 +297,7 @@ export default function AdminReports() {
                       <Pie data={categoryData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} fontSize={11}>
                         {categoryData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                       </Pie>
-                      <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`$${Number(v).toLocaleString()}`, "Revenue"]} />
+                      <Tooltip contentStyle={chartStyle} formatter={(v: any) => [`₹${Number(v).toLocaleString()}`, "Revenue"]} />
                     </PieChart>
                   </ResponsiveContainer>
                 )}
