@@ -486,7 +486,7 @@ export default function AdminStaff() {
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
-              <div><Label>Monthly Salary ($)</Label><Input type="number" min="0" value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} /></div>
+              <div><Label>Monthly Salary (₹)</Label><Input type="number" min="0" value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} /></div>
               <div><Label>Join Date</Label><Input type="date" value={form.join_date} onChange={(e) => setForm({ ...form, join_date: e.target.value })} /></div>
               <div><Label>Pay Day (1-31)</Label><Input type="number" min="1" max="31" value={form.pay_day} onChange={(e) => setForm({ ...form, pay_day: e.target.value })} /></div>
             </div>
