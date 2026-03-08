@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           guests: number
           id: string
+          payment_status: string
           room_id: string
           room_name: string
           special_requests: string | null
@@ -34,6 +35,7 @@ export type Database = {
           created_at?: string
           guests?: number
           id?: string
+          payment_status?: string
           room_id: string
           room_name: string
           special_requests?: string | null
@@ -47,6 +49,7 @@ export type Database = {
           created_at?: string
           guests?: number
           id?: string
+          payment_status?: string
           room_id?: string
           room_name?: string
           special_requests?: string | null
