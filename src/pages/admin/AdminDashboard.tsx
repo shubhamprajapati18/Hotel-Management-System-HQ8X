@@ -113,7 +113,7 @@ export default function AdminDashboard() {
       checkIn: format(parseISO(b.check_in), "MMM d"),
       checkOut: format(parseISO(b.check_out), "MMM d"),
       status: b.status.charAt(0).toUpperCase() + b.status.slice(1),
-      amount: `₹${Number(b.total_price).toLocaleString()}`,
+      amount: formatINR(b.total_price),
     }));
 
   return (
