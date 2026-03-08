@@ -12,6 +12,7 @@ const navItems = [
   { label: "Rooms", icon: BedDouble, path: "/admin/rooms" },
   { label: "Guests", icon: Users, path: "/admin/guests" },
   { label: "Housekeeping", icon: SprayCan, path: "/admin/housekeeping" },
+  { label: "Service Requests", icon: ConciergeBell, path: "/admin/service-requests" },
   { label: "Maintenance", icon: Wrench, path: "/admin/maintenance" },
   { label: "Payments", icon: CreditCard, path: "/admin/payments" },
   { label: "Reports", icon: BarChart3, path: "/admin/reports" },
