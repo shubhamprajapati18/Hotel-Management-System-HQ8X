@@ -255,7 +255,7 @@ export default function RoomDetail() {
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.6 }}>
               <div className="rounded-2xl border border-border bg-card p-6 md:p-7 sticky top-28">
                 <div className="text-center mb-7">
-                  <span className="font-heading text-3xl md:text-4xl font-semibold text-primary">₹{room.price}</span>
+                  <span className="font-heading text-3xl md:text-4xl font-semibold text-primary">{formatINR(room.price)}</span>
                   <span className="text-muted-foreground text-sm ml-1">/night</span>
                 </div>
                 <div className="space-y-4 mb-5">
