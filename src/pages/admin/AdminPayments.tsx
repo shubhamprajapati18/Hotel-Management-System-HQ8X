@@ -58,10 +58,10 @@ export default function AdminPayments() {
     .reduce((s, b) => s + Number(b.total_price), 0);
 
   const kpis = [
-    { label: "Today", value: `₹${revenueToday.toLocaleString()}` },
-    { label: "This Week", value: `₹${revenueWeek.toLocaleString()}` },
-    { label: "This Month", value: `₹${revenueMonth.toLocaleString()}` },
-    { label: "Pending", value: `₹${pending.toLocaleString()}` },
+    { label: "Today", value: formatINR(revenueToday) },
+    { label: "This Week", value: formatINR(revenueWeek) },
+    { label: "This Month", value: formatINR(revenueMonth) },
+    { label: "Pending", value: formatINR(pending) },
   ];
 
   return (
