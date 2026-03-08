@@ -1,6 +1,7 @@
 import { GuestNav } from "@/components/GuestNav";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { CalendarDays, Bell, CreditCard, User, Bed, ConciergeBell, Wrench, SprayCan, Clock, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -43,6 +44,16 @@ export default function GuestDashboard() {
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-10 md:mb-12">
             <p className="text-primary tracking-[0.3em] uppercase text-[11px] mb-2 font-medium">Welcome back</p>
             <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-medium text-foreground tracking-tight">My Stay</h1>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.6 }} className="rounded-2xl border border-primary/20 bg-primary/5 p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 md:mb-10">
+            <div>
+              <h2 className="font-heading text-lg md:text-xl font-medium text-foreground tracking-tight">Ready for your next getaway?</h2>
+              <p className="text-sm text-muted-foreground mt-1">Explore our rooms & suites and book your perfect stay.</p>
+            </div>
+            <Button variant="luxury" size="lg" asChild className="shrink-0">
+              <Link to="/rooms">Book Your Stay</Link>
+            </Button>
           </motion.div>
 
           <div className="grid lg:grid-cols-[200px_1fr] gap-8 md:gap-10">
