@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { GuestNav } from "@/components/GuestNav";
 import { Footer } from "@/components/Footer";
 import { rooms as staticRooms } from "@/data/rooms";
+import { formatINR } from "@/lib/formatCurrency";
 import { motion } from "framer-motion";
 import { Star, Users, Maximize2, ArrowRight, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
