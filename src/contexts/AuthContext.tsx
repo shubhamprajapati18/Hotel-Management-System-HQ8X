@@ -43,21 +43,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(session?.user ?? null);
 
         if (session?.user) {
+          setLoading(true);
+
           // Fetch profile & role using setTimeout to avoid deadlock
           setTimeout(async () => {
-            const { data: profileData } = await supabase
-              .from("profiles")
-              .select("first_name, last_name, avatar_url")
-              .eq("user_id", session.user.id)
-              .single();
-            setProfile(profileData);
+            try {
+              const { data: profileData } = await supabase
+                .from("profiles")
+                .select("first_name, last_name, avatar_url")
+                .eq("user_id", session.user.id)
+                .single();
+              setProfile(profileData);
 
-            const { data: roleData } = await supabase.rpc("has_role", {
-              _user_id: session.user.id,
-              _role: "admin",
-            });
-            setIsAdmin(!!roleData);
-            setLoading(false);
+              const { data: roleData } = await supabase.rpc("has_role", {
+                _user_id: session.user.id,
+                _role: "admin",
+              });
+              setIsAdmin(!!roleData);
+            } finally {
+              setLoading(false);
+            }
           }, 0);
         } else {
           setProfile(null);
