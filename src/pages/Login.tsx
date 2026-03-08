@@ -197,6 +197,17 @@ export default function Login() {
               </div>
             </div>
 
+            {!isSignUp && (
+              <div className="text-right">
+                <Link
+                  to="/reset-password"
+                  className="text-xs text-primary hover:underline transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            )}
+
             <Button
               variant="luxury"
               className="w-full py-6 rounded-xl text-sm tracking-wider uppercase"

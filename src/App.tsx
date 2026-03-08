@@ -25,6 +25,7 @@ import Dining from "./pages/Dining";
 import Experiences from "./pages/Experiences";
 import Offers from "./pages/Offers";
 import Contact from "./pages/Contact";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/rooms/:id" element={<RoomDetail />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected guest route */}
             <Route path="/my-stay" element={<ProtectedRoute><GuestDashboard /></ProtectedRoute>} />
