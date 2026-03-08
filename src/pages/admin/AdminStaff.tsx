@@ -414,7 +414,7 @@ export default function AdminStaff() {
                   <div key={p.id} className="flex items-center justify-between bg-secondary/30 rounded-lg px-3 py-2 text-sm">
                     <div>
                       <span className="font-medium text-foreground">{p.month}</span>
-                      <span className="text-muted-foreground ml-2">— ${Number(p.amount).toLocaleString()}</span>
+                      <span className="text-muted-foreground ml-2">— ₹{Number(p.amount).toLocaleString()}</span>
                       {p.notes && <span className="text-muted-foreground text-xs ml-2">({p.notes})</span>}
                     </div>
                     <span className="text-muted-foreground text-xs">{format(parseISO(p.paid_at), "MMM d, yyyy")}</span>
