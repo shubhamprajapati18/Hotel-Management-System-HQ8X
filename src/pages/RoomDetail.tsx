@@ -1,21 +1,31 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { GuestNav } from "@/components/GuestNav";
 import { Button } from "@/components/ui/button";
 import { rooms } from "@/data/rooms";
 import { motion } from "framer-motion";
-import { Star, Users, Maximize2, Check, ArrowLeft, CalendarDays } from "lucide-react";
+import { Star, Users, Maximize2, Check, ArrowLeft, CalendarDays, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function RoomDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const room = rooms.find((r) => r.id === id);
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
+  const [guests, setGuests] = useState("1");
+  const [specialRequests, setSpecialRequests] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!room) {
     return (
@@ -26,6 +36,41 @@ export default function RoomDetail() {
   }
 
   const nights = checkIn && checkOut ? Math.max(1, Math.ceil((checkOut.getTime() - checkIn.getTime()) / 86400000)) : 0;
+  const subtotal = room.price * nights;
+  const serviceFee = Math.round(subtotal * 0.1);
+  const total = subtotal + serviceFee;
+
+  const handleBooking = async () => {
+    if (!checkIn || !checkOut) {
+      toast.error("Please select check-in and check-out dates");
+      return;
+    }
+    if (!user) {
+      toast.error("Please sign in to book a room");
+      navigate("/login");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const { error } = await supabase.from("bookings").insert({
+      user_id: user.id,
+      room_id: room.id,
+      room_name: room.name,
+      check_in: format(checkIn, "yyyy-MM-dd"),
+      check_out: format(checkOut, "yyyy-MM-dd"),
+      guests: parseInt(guests),
+      special_requests: specialRequests.trim() || null,
+      total_price: total,
+    });
+
+    setIsSubmitting(false);
+    if (error) {
+      toast.error("Booking failed. Please try again.");
+      return;
+    }
+    toast.success("Booking confirmed! Redirecting to My Stay...");
+    setTimeout(() => navigate("/my-stay"), 1500);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,7 +153,7 @@ export default function RoomDetail() {
                   <span className="text-muted-foreground text-sm ml-1">/night</span>
                 </div>
 
-                <div className="space-y-4 mb-7">
+                <div className="space-y-4 mb-5">
                   <div>
                     <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2 block font-medium">Check-in</label>
                     <Popover>
@@ -137,21 +182,46 @@ export default function RoomDetail() {
                       </PopoverContent>
                     </Popover>
                   </div>
+                  <div>
+                    <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2 block font-medium">Guests</label>
+                    <Select value={guests} onValueChange={setGuests}>
+                      <SelectTrigger className="h-11 md:h-12 rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: room.capacity }, (_, i) => i + 1).map((n) => (
+                          <SelectItem key={n} value={String(n)}>
+                            {n} {n === 1 ? "Guest" : "Guests"}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2 block font-medium">Special Requests</label>
+                    <Textarea
+                      placeholder="Late check-in, extra pillows, dietary needs..."
+                      value={specialRequests}
+                      onChange={(e) => setSpecialRequests(e.target.value)}
+                      className="rounded-xl resize-none min-h-[80px] text-sm"
+                      maxLength={500}
+                    />
+                  </div>
                 </div>
 
                 {nights > 0 && (
                   <div className="border-t border-border pt-4 mb-5 space-y-2.5 text-sm">
                     <div className="flex justify-between text-muted-foreground">
                       <span>${room.price} × {nights} nights</span>
-                      <span>${room.price * nights}</span>
+                      <span>${subtotal}</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
                       <span>Service fee</span>
-                      <span>${Math.round(room.price * nights * 0.1)}</span>
+                      <span>${serviceFee}</span>
                     </div>
                     <div className="flex justify-between font-medium text-foreground pt-3 border-t border-border">
                       <span>Total</span>
-                      <span className="text-primary font-heading text-lg">${Math.round(room.price * nights * 1.1)}</span>
+                      <span className="text-primary font-heading text-lg">${total}</span>
                     </div>
                   </div>
                 )}
@@ -159,15 +229,10 @@ export default function RoomDetail() {
                 <Button
                   variant="gold"
                   className="w-full py-6 rounded-xl text-sm tracking-wider uppercase"
-                  onClick={() => {
-                    if (!checkIn || !checkOut) {
-                      toast.error("Please select check-in and check-out dates");
-                      return;
-                    }
-                    toast.success("Booking confirmed! Redirecting to My Stay...");
-                  }}
+                  onClick={handleBooking}
+                  disabled={isSubmitting}
                 >
-                  Book Now
+                  {isSubmitting ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Booking...</> : "Book Now"}
                 </Button>
               </div>
             </motion.div>
