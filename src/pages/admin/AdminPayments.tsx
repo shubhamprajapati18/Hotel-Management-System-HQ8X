@@ -1,30 +1,75 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { motion } from "framer-motion";
-import { DollarSign, ArrowUpRight, ArrowDownRight } from "lucide-react";
-
-const transactions = [
-  { id: "P-2001", guest: "Sarah Chen", description: "Ocean View Suite - 4 nights", amount: "$1,800", type: "Payment", date: "Mar 15, 2026" },
-  { id: "P-2002", guest: "Michael Ross", description: "City Skyline Deluxe - 4 nights", amount: "$1,280", type: "Payment", date: "Mar 16, 2026" },
-  { id: "P-2003", guest: "Emma Watson", description: "Royal Penthouse - Refund", amount: "-$600", type: "Refund", date: "Mar 14, 2026" },
-  { id: "P-2004", guest: "David Kim", description: "Garden Retreat - 2 nights", amount: "$760", type: "Payment", date: "Mar 18, 2026" },
-  { id: "P-2005", guest: "Lisa Park", description: "Room Service Charge", amount: "$145", type: "Payment", date: "Mar 17, 2026" },
-];
+import { DollarSign, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { format, parseISO, startOfDay, startOfWeek, startOfMonth } from "date-fns";
 
 export default function AdminPayments() {
+  const { data: bookings = [], isLoading } = useQuery({
+    queryKey: ["admin-payments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bookings")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+
+      const userIds = [...new Set((data || []).map((b) => b.user_id))];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, first_name, last_name")
+        .in("user_id", userIds);
+
+      const profileMap: Record<string, string> = {};
+      (profiles || []).forEach((p) => {
+        profileMap[p.user_id] = `${p.first_name || ""} ${p.last_name || ""}`.trim() || "Guest";
+      });
+
+      return (data || []).map((b) => ({
+        ...b,
+        guest_name: profileMap[b.user_id] || "Guest",
+      }));
+    },
+  });
+
+  const now = new Date();
+  const todayStart = startOfDay(now);
+  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+  const monthStart = startOfMonth(now);
+
+  const revenueToday = bookings
+    .filter((b) => new Date(b.created_at) >= todayStart && b.status !== "cancelled")
+    .reduce((s, b) => s + Number(b.total_price), 0);
+
+  const revenueWeek = bookings
+    .filter((b) => new Date(b.created_at) >= weekStart && b.status !== "cancelled")
+    .reduce((s, b) => s + Number(b.total_price), 0);
+
+  const revenueMonth = bookings
+    .filter((b) => new Date(b.created_at) >= monthStart && b.status !== "cancelled")
+    .reduce((s, b) => s + Number(b.total_price), 0);
+
+  const pending = bookings
+    .filter((b) => b.status === "confirmed")
+    .reduce((s, b) => s + Number(b.total_price), 0);
+
+  const kpis = [
+    { label: "Today", value: `$${revenueToday.toLocaleString()}` },
+    { label: "This Week", value: `$${revenueWeek.toLocaleString()}` },
+    { label: "This Month", value: `$${revenueMonth.toLocaleString()}` },
+    { label: "Pending", value: `$${pending.toLocaleString()}` },
+  ];
+
   return (
     <AdminLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="font-heading text-3xl font-bold text-foreground mb-1">Payments</h1>
-        <p className="text-muted-foreground text-sm mb-8">Transaction history and invoices</p>
+        <p className="text-muted-foreground text-sm mb-8">Transaction history and revenue</p>
       </motion.div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: "Today", value: "$4,385" },
-          { label: "This Week", value: "$28,740" },
-          { label: "This Month", value: "$124,580" },
-          { label: "Pending", value: "$3,200" },
-        ].map((k) => (
+        {kpis.map((k) => (
           <div key={k.label} className="kpi-card text-center">
             <DollarSign className="h-5 w-5 text-primary mx-auto mb-2" />
             <p className="text-2xl font-bold text-foreground">{k.value}</p>
@@ -33,36 +78,54 @@ export default function AdminPayments() {
         ))}
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="admin-section overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left py-3 px-4 text-muted-foreground font-medium">ID</th>
-              <th className="text-left py-3 px-4 text-muted-foreground font-medium">Guest</th>
-              <th className="text-left py-3 px-4 text-muted-foreground font-medium">Description</th>
-              <th className="text-left py-3 px-4 text-muted-foreground font-medium">Type</th>
-              <th className="text-right py-3 px-4 text-muted-foreground font-medium">Amount</th>
-              <th className="text-right py-3 px-4 text-muted-foreground font-medium">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((t) => (
-              <tr key={t.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
-                <td className="py-3 px-4 font-mono text-xs text-muted-foreground">{t.id}</td>
-                <td className="py-3 px-4 font-medium text-foreground">{t.guest}</td>
-                <td className="py-3 px-4 text-foreground/80">{t.description}</td>
-                <td className="py-3 px-4">
-                  <span className={`inline-flex items-center gap-1 text-xs font-medium ${t.type === "Refund" ? "text-destructive" : "text-accent"}`}>
-                    {t.type === "Refund" ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}{t.type}
-                  </span>
-                </td>
-                <td className={`py-3 px-4 text-right font-semibold ${t.type === "Refund" ? "text-destructive" : "text-primary"}`}>{t.amount}</td>
-                <td className="py-3 px-4 text-right text-muted-foreground">{t.date}</td>
+      {isLoading ? (
+        <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+      ) : bookings.length === 0 ? (
+        <div className="admin-section text-center py-10">
+          <p className="text-muted-foreground text-sm">No transactions yet.</p>
+        </div>
+      ) : (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="admin-section overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-3 px-4 text-muted-foreground font-medium">Guest</th>
+                <th className="text-left py-3 px-4 text-muted-foreground font-medium">Room</th>
+                <th className="text-left py-3 px-4 text-muted-foreground font-medium">Dates</th>
+                <th className="text-left py-3 px-4 text-muted-foreground font-medium">Status</th>
+                <th className="text-right py-3 px-4 text-muted-foreground font-medium">Amount</th>
+                <th className="text-right py-3 px-4 text-muted-foreground font-medium">Booked</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </motion.div>
+            </thead>
+            <tbody>
+              {bookings.map((b: any) => (
+                <tr key={b.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
+                  <td className="py-3 px-4 font-medium text-foreground">{b.guest_name}</td>
+                  <td className="py-3 px-4 text-foreground/80">{b.room_name}</td>
+                  <td className="py-3 px-4 text-muted-foreground text-xs">
+                    {b.check_in} → {b.check_out}
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className={`text-xs font-medium capitalize ${
+                      b.status === "cancelled" ? "text-destructive" :
+                      b.status === "checked-in" ? "text-accent" :
+                      "text-primary"
+                    }`}>
+                      {b.status}
+                    </span>
+                  </td>
+                  <td className={`py-3 px-4 text-right font-semibold ${b.status === "cancelled" ? "text-destructive" : "text-primary"}`}>
+                    ${Number(b.total_price).toLocaleString()}
+                  </td>
+                  <td className="py-3 px-4 text-right text-muted-foreground text-xs">
+                    {format(parseISO(b.created_at), "MMM d, yyyy")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </motion.div>
+      )}
     </AdminLayout>
   );
 }
