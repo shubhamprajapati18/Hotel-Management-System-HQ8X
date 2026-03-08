@@ -26,6 +26,7 @@ export function GuestNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, isAdmin, signOut } = useAuth();
+  const unreadCount = useUnreadNotifications();
 
   const hasDarkHero = darkHeroPages.includes(location.pathname);
   const solid = scrolled || !hasDarkHero;
