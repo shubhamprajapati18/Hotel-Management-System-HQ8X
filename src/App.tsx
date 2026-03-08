@@ -9,7 +9,13 @@ import Index from "./pages/Index";
 import Rooms from "./pages/Rooms";
 import RoomDetail from "./pages/RoomDetail";
 import Login from "./pages/Login";
-import GuestDashboard from "./pages/GuestDashboard";
+import MyBookings from "./pages/my-stay/MyBookings";
+import RoomServicesPage from "./pages/my-stay/RoomServices";
+import HousekeepingPage from "./pages/my-stay/Housekeeping";
+import MaintenancePage from "./pages/my-stay/Maintenance";
+import PaymentsPage from "./pages/my-stay/Payments";
+import NotificationsPage from "./pages/my-stay/Notifications";
+import ProfilePage from "./pages/my-stay/Profile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminRooms from "./pages/admin/AdminRooms";
@@ -51,7 +57,13 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected guest route */}
-            <Route path="/my-stay" element={<ProtectedRoute><GuestDashboard /></ProtectedRoute>} />
+            <Route path="/my-stay" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
+            <Route path="/my-stay/room-services" element={<ProtectedRoute><RoomServicesPage /></ProtectedRoute>} />
+            <Route path="/my-stay/housekeeping" element={<ProtectedRoute><HousekeepingPage /></ProtectedRoute>} />
+            <Route path="/my-stay/maintenance" element={<ProtectedRoute><MaintenancePage /></ProtectedRoute>} />
+            <Route path="/my-stay/payments" element={<ProtectedRoute><PaymentsPage /></ProtectedRoute>} />
+            <Route path="/my-stay/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+            <Route path="/my-stay/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
             {/* Protected admin routes */}
             <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
