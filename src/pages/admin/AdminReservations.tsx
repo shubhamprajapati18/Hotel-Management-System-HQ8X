@@ -2,15 +2,18 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, ChevronRight, User, Calendar, BedDouble, DollarSign, CreditCard, CheckCircle2, Clock, XCircle, AlertCircle } from "lucide-react";
+import { Search, ChevronRight, User, Calendar, BedDouble, DollarSign, CreditCard, CheckCircle2, Clock, XCircle, AlertCircle, CalendarIcon, X } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format, parseISO } from "date-fns";
-import { useState, useEffect } from "react";
+import { format, parseISO, isWithinInterval } from "date-fns";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const statusStyles: Record<string, string> = {
@@ -36,6 +39,9 @@ const statusOptions = [
 
 export default function AdminReservations() {
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
   const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
@@ -66,9 +72,7 @@ export default function AdminReservations() {
       queryClient.invalidateQueries({ queryKey: ["admin-all-bookings"] });
       toast.success("Payment status updated successfully");
     },
-    onError: () => {
-      toast.error("Failed to update payment status");
-    },
+    onError: () => toast.error("Failed to update payment status"),
   });
 
   const updateStatusMutation = useMutation({
@@ -80,9 +84,7 @@ export default function AdminReservations() {
       queryClient.invalidateQueries({ queryKey: ["admin-all-bookings"] });
       toast.success("Booking status updated");
     },
-    onError: () => {
-      toast.error("Failed to update booking status");
-    },
+    onError: () => toast.error("Failed to update booking status"),
   });
 
   useEffect(() => {
@@ -117,13 +119,35 @@ export default function AdminReservations() {
     createdAt: format(parseISO(b.created_at), "MMM d, yyyy 'at' h:mm a"),
   }));
 
-  const filtered = search
-    ? reservations.filter((r) =>
+  const filtered = useMemo(() => {
+    return reservations.filter((r) => {
+      // Text search
+      if (search && !(
         r.guest.toLowerCase().includes(search.toLowerCase()) ||
         r.room.toLowerCase().includes(search.toLowerCase()) ||
         r.id.toLowerCase().includes(search.toLowerCase())
-      )
-    : reservations;
+      )) return false;
+
+      // Status filter
+      if (statusFilter !== "all" && r.status !== statusFilter) return false;
+
+      // Date range filter (check-in date)
+      const checkInDate = parseISO(r.checkIn);
+      if (dateFrom && checkInDate < dateFrom) return false;
+      if (dateTo && checkInDate > dateTo) return false;
+
+      return true;
+    });
+  }, [reservations, search, statusFilter, dateFrom, dateTo]);
+
+  const hasActiveFilters = statusFilter !== "all" || dateFrom || dateTo;
+
+  const clearFilters = () => {
+    setStatusFilter("all");
+    setDateFrom(undefined);
+    setDateTo(undefined);
+    setSearch("");
+  };
 
   const selected = reservations.find((r) => r.fullId === selectedBooking);
   const paymentInfo = selected ? paymentStatusConfig[selected.paymentStatus] || paymentStatusConfig.pending : null;
@@ -131,23 +155,67 @@ export default function AdminReservations() {
   return (
     <AdminLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="font-heading text-3xl font-bold text-foreground">Reservations</h1>
             <p className="text-muted-foreground text-sm">Manage all guest bookings ({bookings.length} total)</p>
           </div>
-          <div className="flex gap-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search bookings..."
-                className="pl-9 bg-secondary border-border w-64"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <Button variant="outline" size="icon"><Filter className="h-4 w-4" /></Button>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search bookings..."
+              className="pl-9 bg-secondary border-border w-64"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
+        </div>
+
+        {/* Filters Row */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[150px] bg-secondary border-border">
+              <SelectValue placeholder="All Statuses" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              {statusOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn("w-[160px] justify-start text-left font-normal", !dateFrom && "text-muted-foreground")}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateFrom ? format(dateFrom, "MMM d, yyyy") : "From date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus className="p-3 pointer-events-auto" />
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn("w-[160px] justify-start text-left font-normal", !dateTo && "text-muted-foreground")}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateTo ? format(dateTo, "MMM d, yyyy") : "To date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent mode="single" selected={dateTo} onSelect={setDateTo} initialFocus className="p-3 pointer-events-auto" />
+            </PopoverContent>
+          </Popover>
+
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground">
+              <X className="h-4 w-4 mr-1" /> Clear filters
+            </Button>
+          )}
+
+          <span className="text-xs text-muted-foreground ml-auto">{filtered.length} results</span>
         </div>
       </motion.div>
 
@@ -158,7 +226,7 @@ export default function AdminReservations() {
           </div>
         ) : filtered.length === 0 ? (
           <p className="text-muted-foreground text-sm py-12 text-center">
-            {search ? "No bookings match your search." : "No bookings found."}
+            {search || hasActiveFilters ? "No bookings match your filters." : "No bookings found."}
           </p>
         ) : (
           <table className="w-full text-sm">
@@ -179,29 +247,20 @@ export default function AdminReservations() {
               {filtered.map((r) => {
                 const pConfig = paymentStatusConfig[r.paymentStatus] || paymentStatusConfig.pending;
                 return (
-                  <tr
-                    key={r.fullId}
-                    className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer"
-                    onClick={() => setSelectedBooking(r.fullId)}
-                  >
+                  <tr key={r.fullId} className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => setSelectedBooking(r.fullId)}>
                     <td className="py-3 px-4 font-mono text-xs text-muted-foreground">{r.id}</td>
                     <td className="py-3 px-4 font-medium text-foreground">{r.guest}</td>
                     <td className="py-3 px-4 text-foreground/80">{r.room}</td>
                     <td className="py-3 px-4 text-muted-foreground">{r.checkInFormatted}</td>
                     <td className="py-3 px-4 text-muted-foreground">{r.checkOutFormatted}</td>
                     <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
-                      <Select
-                        value={r.status}
-                        onValueChange={(value) => updateStatusMutation.mutate({ bookingId: r.fullId, status: value })}
-                      >
+                      <Select value={r.status} onValueChange={(value) => updateStatusMutation.mutate({ bookingId: r.fullId, status: value })}>
                         <SelectTrigger className={`w-[130px] h-7 text-xs font-medium border-0 capitalize ${statusStyles[r.status] || "bg-muted text-muted-foreground"}`}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           {statusOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value} className="capitalize text-xs">
-                              {opt.label}
-                            </SelectItem>
+                            <SelectItem key={opt.value} value={opt.value} className="capitalize text-xs">{opt.label}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -212,9 +271,7 @@ export default function AdminReservations() {
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right font-semibold text-primary">{r.amountFormatted}</td>
-                    <td className="py-3 px-4">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </td>
+                    <td className="py-3 px-4"><ChevronRight className="h-4 w-4 text-muted-foreground" /></td>
                   </tr>
                 );
               })}
@@ -223,7 +280,6 @@ export default function AdminReservations() {
         )}
       </motion.div>
 
-      {/* Reservation Detail Modal */}
       <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
         <DialogContent className="sm:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-y-auto">
           {selected && (
@@ -232,125 +288,50 @@ export default function AdminReservations() {
                 <DialogTitle className="text-xl">Reservation #{selected.id}</DialogTitle>
                 <DialogDescription>Created {selected.createdAt}</DialogDescription>
               </DialogHeader>
-
               <div className="mt-2 space-y-6">
-                {/* Guest Info */}
                 <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
-                    <User className="h-5 w-5 text-muted-foreground" />
-                  </div>
+                  <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center"><User className="h-5 w-5 text-muted-foreground" /></div>
                   <div>
                     <p className="font-semibold text-foreground">{selected.guest}</p>
                     <p className="text-xs text-muted-foreground">{selected.guests} guest{selected.guests > 1 ? "s" : ""}</p>
                   </div>
                 </div>
-
                 <Separator />
-
-                {/* Stay Details */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Stay Details</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div className="flex items-center gap-2">
-                      <BedDouble className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Room</p>
-                        <p className="font-medium text-foreground">{selected.room}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Check-in</p>
-                        <p className="font-medium text-foreground">{selected.checkInFormatted}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Check-out</p>
-                        <p className="font-medium text-foreground">{selected.checkOutFormatted}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Total</p>
-                        <p className="font-semibold text-primary">{selected.amountFormatted}</p>
-                      </div>
-                    </div>
+                    <div className="flex items-center gap-2"><BedDouble className="h-4 w-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Room</p><p className="font-medium text-foreground">{selected.room}</p></div></div>
+                    <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Check-in</p><p className="font-medium text-foreground">{selected.checkInFormatted}</p></div></div>
+                    <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Check-out</p><p className="font-medium text-foreground">{selected.checkOutFormatted}</p></div></div>
+                    <div className="flex items-center gap-2"><DollarSign className="h-4 w-4 text-muted-foreground" /><div><p className="text-xs text-muted-foreground">Total</p><p className="font-semibold text-primary">{selected.amountFormatted}</p></div></div>
                   </div>
                 </div>
-
-                {selected.specialRequests && (
-                  <>
-                    <Separator />
-                    <div>
-                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Special Requests</h3>
-                      <p className="text-sm text-foreground bg-secondary/50 rounded-lg p-3">{selected.specialRequests}</p>
-                    </div>
-                  </>
-                )}
-
+                {selected.specialRequests && (<><Separator /><div><h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Special Requests</h3><p className="text-sm text-foreground bg-secondary/50 rounded-lg p-3">{selected.specialRequests}</p></div></>)}
                 <Separator />
-
-                {/* Booking Status */}
                 <div>
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Booking Status</h3>
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize ${statusStyles[selected.status] || "bg-muted text-muted-foreground"}`}>
-                      {selected.status}
-                    </span>
-                  </div>
+                  <div className="flex items-center gap-2 mb-3"><span className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize ${statusStyles[selected.status] || "bg-muted text-muted-foreground"}`}>{selected.status}</span></div>
                   <div className="flex flex-wrap gap-2">
                     {["confirmed", "checked-in", "cancelled"].filter(s => s !== selected.status).map((s) => (
-                      <Button
-                        key={s}
-                        variant="outline"
-                        size="sm"
-                        className="capitalize"
-                        disabled={updateStatusMutation.isPending}
-                        onClick={() => updateStatusMutation.mutate({ bookingId: selected.fullId, status: s })}
-                      >
-                        Mark as {s}
-                      </Button>
+                      <Button key={s} variant="outline" size="sm" className="capitalize" disabled={updateStatusMutation.isPending} onClick={() => updateStatusMutation.mutate({ bookingId: selected.fullId, status: s })}>Mark as {s}</Button>
                     ))}
                   </div>
                 </div>
-
                 <Separator />
-
-                {/* Payment Status */}
                 <div>
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Payment Status</h3>
                   <div className="flex items-center gap-2 mb-4">
                     <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    {paymentInfo && (
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${paymentInfo.className}`}>
-                        {paymentInfo.icon} {paymentInfo.label}
-                      </span>
-                    )}
+                    {paymentInfo && (<span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${paymentInfo.className}`}>{paymentInfo.icon} {paymentInfo.label}</span>)}
                     <span className="text-sm font-semibold text-primary ml-auto">{selected.amountFormatted}</span>
                   </div>
-
                   {selected.paymentStatus !== "paid" && (
-                    <Button
-                      className="w-full"
-                      onClick={() => markPaymentMutation.mutate({ bookingId: selected.fullId, paymentStatus: "paid" })}
-                      disabled={markPaymentMutation.isPending}
-                    >
-                      <CheckCircle2 className="h-4 w-4 mr-2" />
-                      {markPaymentMutation.isPending ? "Updating..." : "Mark Payment as Successful"}
+                    <Button className="w-full" onClick={() => markPaymentMutation.mutate({ bookingId: selected.fullId, paymentStatus: "paid" })} disabled={markPaymentMutation.isPending}>
+                      <CheckCircle2 className="h-4 w-4 mr-2" />{markPaymentMutation.isPending ? "Updating..." : "Mark Payment as Successful"}
                     </Button>
                   )}
-
                   {selected.paymentStatus === "paid" && (
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => markPaymentMutation.mutate({ bookingId: selected.fullId, paymentStatus: "refunded" })}
-                      disabled={markPaymentMutation.isPending}
-                    >
+                    <Button variant="outline" className="w-full" onClick={() => markPaymentMutation.mutate({ bookingId: selected.fullId, paymentStatus: "refunded" })} disabled={markPaymentMutation.isPending}>
                       {markPaymentMutation.isPending ? "Processing..." : "Mark as Refunded"}
                     </Button>
                   )}
