@@ -1,6 +1,12 @@
 import roomSuite from "@/assets/room-suite.jpg";
 import roomDeluxe from "@/assets/room-deluxe.jpg";
 import roomPenthouse from "@/assets/room-penthouse.jpg";
+import roomSuiteBath from "@/assets/room-suite-bath.jpg";
+import roomSuiteLiving from "@/assets/room-suite-living.jpg";
+import roomSuiteBalcony from "@/assets/room-suite-balcony.jpg";
+import roomDeluxeBath from "@/assets/room-deluxe-bath.jpg";
+import roomPenthouseTerrace from "@/assets/room-penthouse-terrace.jpg";
+import roomPenthouseDining from "@/assets/room-penthouse-dining.jpg";
 
 export interface Room {
   id: string;
@@ -8,6 +14,7 @@ export interface Room {
   category: string;
   description: string;
   image: string;
+  gallery?: string[];
   price: number;
   size: string;
   capacity: number;
@@ -23,6 +30,7 @@ export const rooms: Room[] = [
     category: "Suite",
     description: "Wake up to panoramic ocean views from your private balcony. This expansive suite features a king bed, luxury bath with soaking tub, and a separate living area.",
     image: roomSuite,
+    gallery: [roomSuiteBath, roomSuiteLiving, roomSuiteBalcony],
     price: 450,
     size: "65 m²",
     capacity: 2,
@@ -36,6 +44,7 @@ export const rooms: Room[] = [
     category: "Deluxe",
     description: "Elevated luxury with breathtaking city views. Modern furnishings, premium bedding, and a curated minibar for the discerning traveler.",
     image: roomDeluxe,
+    gallery: [roomDeluxeBath, roomSuiteLiving],
     price: 320,
     size: "48 m²",
     capacity: 2,
@@ -49,6 +58,7 @@ export const rooms: Room[] = [
     category: "Penthouse",
     description: "The pinnacle of luxury. A sprawling penthouse with private terrace, butler service, panoramic views, and bespoke interiors crafted for royalty.",
     image: roomPenthouse,
+    gallery: [roomPenthouseTerrace, roomPenthouseDining, roomSuiteBath],
     price: 1200,
     size: "120 m²",
     capacity: 4,
@@ -62,6 +72,7 @@ export const rooms: Room[] = [
     category: "Suite",
     description: "A tranquil escape surrounded by lush gardens. Features floor-to-ceiling windows, a spa-inspired bathroom, and direct garden access.",
     image: roomSuite,
+    gallery: [roomSuiteBalcony, roomSuiteBath, roomSuiteLiving],
     price: 380,
     size: "55 m²",
     capacity: 2,
@@ -75,6 +86,7 @@ export const rooms: Room[] = [
     category: "Deluxe",
     description: "Designed for the modern professional. Spacious work area, high-speed connectivity, and premium comfort after a productive day.",
     image: roomDeluxe,
+    gallery: [roomDeluxeBath, roomSuiteLiving],
     price: 280,
     size: "42 m²",
     capacity: 2,
@@ -88,6 +100,7 @@ export const rooms: Room[] = [
     category: "Penthouse",
     description: "Unmatched grandeur with separate living quarters, a private dining room, personal concierge, and views that define opulence.",
     image: roomPenthouse,
+    gallery: [roomPenthouseDining, roomPenthouseTerrace, roomSuiteBath],
     price: 950,
     size: "100 m²",
     capacity: 3,

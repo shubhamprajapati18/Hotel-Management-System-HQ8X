@@ -100,6 +100,11 @@ export default function RoomDetail() {
 
   const allImages: string[] = [];
   if (room?.image) allImages.push(room.image);
+  // Add static gallery images for static rooms
+  if (staticRoom?.gallery) {
+    staticRoom.gallery.forEach((img) => allImages.push(img));
+  }
+  // Add DB gallery images
   galleryImages.forEach((img) => allImages.push(img.image_url));
 
   if (!room) {
