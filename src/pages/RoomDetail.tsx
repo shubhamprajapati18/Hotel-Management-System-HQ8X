@@ -131,69 +131,143 @@ export default function RoomDetail() {
     <div className="min-h-screen bg-background">
       <GuestNav />
       <div className="pt-24">
-        {/* Hero Image */}
-        <div
-          className="relative h-[45vh] md:h-[55vh] lg:h-[65vh] overflow-hidden bg-secondary cursor-pointer"
-          onClick={() => allImages.length > 0 && openLightbox(0)}
-        >
-          {room.image ? (
-            <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center"><ImageIcon className="h-20 w-20 text-muted-foreground/20" /></div>
-          )}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, hsla(240,10%,10%,0.05) 0%, hsla(240,10%,10%,0.75) 100%)" }} />
-
-          {/* Gallery thumbnail strip */}
-          {allImages.length > 1 && (
-            <div className="absolute bottom-20 md:bottom-24 right-5 md:right-6 z-10 flex items-center gap-2">
-              {allImages.slice(1, 4).map((img, i) => (
-                <button
-                  key={i}
-                  onClick={(e) => { e.stopPropagation(); openLightbox(i + 1); }}
-                  className="w-14 h-10 md:w-16 md:h-12 rounded-lg overflow-hidden border-2 border-white/30 hover:border-white/70 transition-all"
-                >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
-              {allImages.length > 4 && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); openLightbox(0); }}
-                  className="w-14 h-10 md:w-16 md:h-12 rounded-lg bg-black/50 border-2 border-white/30 hover:border-white/70 transition-all flex items-center justify-center"
-                >
-                  <Camera className="h-4 w-4 text-white mr-1" />
-                  <span className="text-white text-xs font-medium">+{allImages.length - 4}</span>
-                </button>
-              )}
-            </div>
-          )}
-
-          <div className="absolute bottom-8 md:bottom-10 left-0 right-0 z-10 px-5 md:px-6">
-            <div className="container mx-auto max-w-6xl">
-              <Link to="/rooms" className="inline-flex items-center text-[11px] tracking-[0.15em] uppercase text-white/50 hover:text-white transition-colors duration-300 mb-4">
-                <ArrowLeft className="h-3.5 w-3.5 mr-2" /> Back to Rooms
-              </Link>
-              <h1 className="font-heading text-3xl md:text-5xl lg:text-6xl font-medium text-white tracking-tight">{room.name}</h1>
-              <div className="flex flex-wrap items-center gap-4 md:gap-5 mt-3 md:mt-4 text-white/60 text-xs tracking-wide">
-                {room.size && <span className="flex items-center gap-1.5"><Maximize2 className="h-3.5 w-3.5" />{room.size}</span>}
-                <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" />{room.capacity} Guests</span>
-                {room.rating > 0 && <span className="flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-gold-light fill-gold-light" />{room.rating} ({room.reviews} reviews)</span>}
-                {allImages.length > 1 && (
-                  <button onClick={(e) => { e.stopPropagation(); openLightbox(0); }} className="flex items-center gap-1.5 hover:text-white transition-colors">
-                    <Camera className="h-3.5 w-3.5" />{allImages.length} Photos
-                  </button>
-                )}
-              </div>
-            </div>
+        {/* Header bar */}
+        <div className="container mx-auto max-w-6xl px-5 md:px-6 pt-6 pb-4">
+          <Link to="/rooms" className="inline-flex items-center text-[11px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 mb-3">
+            <ArrowLeft className="h-3.5 w-3.5 mr-2" /> Back to Rooms
+          </Link>
+          <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-medium text-foreground tracking-tight">{room.name}</h1>
+          <div className="flex flex-wrap items-center gap-4 md:gap-5 mt-2 text-muted-foreground text-xs tracking-wide">
+            <span className="text-[10px] tracking-[0.2em] uppercase font-medium text-primary bg-primary/5 border border-primary/15 px-3 py-1 rounded-full">{room.category}</span>
+            {room.size && <span className="flex items-center gap-1.5"><Maximize2 className="h-3.5 w-3.5" />{room.size}</span>}
+            <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" />{room.capacity} Guests</span>
+            {room.rating > 0 && <span className="flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-primary fill-primary" />{room.rating} ({room.reviews} reviews)</span>}
           </div>
         </div>
 
-        <div className="container mx-auto max-w-6xl px-5 md:px-6 py-12 md:py-20">
-          <div className="grid lg:grid-cols-[1fr_360px] gap-10 md:gap-16">
-            <div className="space-y-10 md:space-y-14">
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-4 tracking-tight">The Experience</h2>
-                <p className="text-muted-foreground leading-[1.8] text-[15px]">{room.description}</p>
-              </motion.div>
+        {/* Hero Image + Booking Card side by side */}
+        <div className="container mx-auto max-w-6xl px-5 md:px-6 pb-6">
+          <div className="grid lg:grid-cols-[1fr_380px] gap-5 md:gap-6">
+            {/* Image */}
+            <div
+              className="relative rounded-2xl overflow-hidden bg-secondary cursor-pointer aspect-[16/10] lg:aspect-auto lg:min-h-[420px]"
+              onClick={() => allImages.length > 0 && openLightbox(0)}
+            >
+              {room.image ? (
+                <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center"><ImageIcon className="h-20 w-20 text-muted-foreground/20" /></div>
+              )}
+              <div className="absolute inset-0 rounded-2xl" style={{ background: "linear-gradient(180deg, transparent 50%, hsla(240,10%,10%,0.4) 100%)" }} />
+
+              {/* Gallery thumbnails */}
+              {allImages.length > 1 && (
+                <div className="absolute bottom-4 right-4 z-10 flex items-center gap-2">
+                  {allImages.slice(1, 4).map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={(e) => { e.stopPropagation(); openLightbox(i + 1); }}
+                      className="w-14 h-10 md:w-16 md:h-12 rounded-lg overflow-hidden border-2 border-white/30 hover:border-white/70 transition-all"
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                  {allImages.length > 4 && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openLightbox(0); }}
+                      className="w-14 h-10 md:w-16 md:h-12 rounded-lg bg-black/50 border-2 border-white/30 hover:border-white/70 transition-all flex items-center justify-center"
+                    >
+                      <Camera className="h-4 w-4 text-white mr-1" />
+                      <span className="text-white text-xs font-medium">+{allImages.length - 4}</span>
+                    </button>
+                  )}
+                </div>
+              )}
+              {allImages.length > 1 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); openLightbox(0); }}
+                  className="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 text-white/70 hover:text-white text-xs bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full transition-colors"
+                >
+                  <Camera className="h-3.5 w-3.5" />{allImages.length} Photos
+                </button>
+              )}
+            </div>
+
+            {/* Booking Card - placed next to image */}
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.6 }} className="flex flex-col">
+              <div className="rounded-2xl border border-border bg-card p-6 md:p-7 lg:sticky lg:top-28 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="text-center mb-6">
+                    <span className="font-heading text-3xl md:text-4xl font-semibold text-primary">{formatINR(room.price)}</span>
+                    <span className="text-muted-foreground text-sm ml-1">/night</span>
+                  </div>
+                  <div className="space-y-3 mb-4">
+                    <div>
+                      <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5 block font-medium">Check-in</label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className={cn("w-full justify-start text-left h-10 md:h-11 rounded-xl text-sm", !checkIn && "text-muted-foreground")}>
+                            <CalendarDays className="mr-2 h-4 w-4 text-primary/50" />{checkIn ? format(checkIn, "PPP") : "Select date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar mode="single" selected={checkIn} onSelect={setCheckIn} initialFocus className="p-3 pointer-events-auto" disabled={(d) => d < new Date()} />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5 block font-medium">Check-out</label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className={cn("w-full justify-start text-left h-10 md:h-11 rounded-xl text-sm", !checkOut && "text-muted-foreground")}>
+                            <CalendarDays className="mr-2 h-4 w-4 text-primary/50" />{checkOut ? format(checkOut, "PPP") : "Select date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar mode="single" selected={checkOut} onSelect={setCheckOut} initialFocus className="p-3 pointer-events-auto" disabled={(d) => d < (checkIn || new Date())} />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5 block font-medium">Guests</label>
+                      <Select value={guests} onValueChange={setGuests}>
+                        <SelectTrigger className="h-10 md:h-11 rounded-xl"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: room.capacity }, (_, i) => i + 1).map((n) => (
+                            <SelectItem key={n} value={String(n)}>{n} {n === 1 ? "Guest" : "Guests"}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5 block font-medium">Special Requests</label>
+                      <Textarea placeholder="Late check-in, extra pillows..." value={specialRequests} onChange={(e) => setSpecialRequests(e.target.value)} className="rounded-xl resize-none min-h-[60px] text-sm" maxLength={500} />
+                    </div>
+                  </div>
+
+                  {nights > 0 && (
+                    <div className="border-t border-border pt-3 mb-4 space-y-2 text-sm">
+                      <div className="flex justify-between text-muted-foreground"><span>{formatINR(room.price)} × {nights} nights</span><span>{formatINR(subtotal)}</span></div>
+                      <div className="flex justify-between text-muted-foreground"><span>Service fee</span><span>{formatINR(serviceFee)}</span></div>
+                      <div className="flex justify-between font-medium text-foreground pt-2.5 border-t border-border"><span>Total</span><span className="text-primary font-heading text-lg">{formatINR(total)}</span></div>
+                    </div>
+                  )}
+                </div>
+
+                <Button variant="gold" className="w-full py-5 rounded-xl text-sm tracking-wider uppercase" onClick={handleBooking} disabled={isSubmitting}>
+                  {isSubmitting ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Booking...</> : "Book Now"}
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="container mx-auto max-w-6xl px-5 md:px-6 py-10 md:py-16">
+          <div className="max-w-3xl space-y-10 md:space-y-14">
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+              <h2 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-4 tracking-tight">The Experience</h2>
+              <p className="text-muted-foreground leading-[1.8] text-[15px]">{room.description}</p>
+            </motion.div>
 
               {/* Photo Grid */}
               {allImages.length > 1 && (
@@ -251,70 +325,6 @@ export default function RoomDetail() {
                 </div>
               </motion.div>
             </div>
-
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.6 }}>
-              <div className="rounded-2xl border border-border bg-card p-6 md:p-7 sticky top-28">
-                <div className="text-center mb-7">
-                  <span className="font-heading text-3xl md:text-4xl font-semibold text-primary">{formatINR(room.price)}</span>
-                  <span className="text-muted-foreground text-sm ml-1">/night</span>
-                </div>
-                <div className="space-y-4 mb-5">
-                  <div>
-                    <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2 block font-medium">Check-in</label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className={cn("w-full justify-start text-left h-11 md:h-12 rounded-xl", !checkIn && "text-muted-foreground")}>
-                          <CalendarDays className="mr-2 h-4 w-4 text-primary/50" />{checkIn ? format(checkIn, "PPP") : "Select date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar mode="single" selected={checkIn} onSelect={setCheckIn} initialFocus className="p-3 pointer-events-auto" disabled={(d) => d < new Date()} />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div>
-                    <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2 block font-medium">Check-out</label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className={cn("w-full justify-start text-left h-11 md:h-12 rounded-xl", !checkOut && "text-muted-foreground")}>
-                          <CalendarDays className="mr-2 h-4 w-4 text-primary/50" />{checkOut ? format(checkOut, "PPP") : "Select date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar mode="single" selected={checkOut} onSelect={setCheckOut} initialFocus className="p-3 pointer-events-auto" disabled={(d) => d < (checkIn || new Date())} />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div>
-                    <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2 block font-medium">Guests</label>
-                    <Select value={guests} onValueChange={setGuests}>
-                      <SelectTrigger className="h-11 md:h-12 rounded-xl"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: room.capacity }, (_, i) => i + 1).map((n) => (
-                          <SelectItem key={n} value={String(n)}>{n} {n === 1 ? "Guest" : "Guests"}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2 block font-medium">Special Requests</label>
-                    <Textarea placeholder="Late check-in, extra pillows, dietary needs..." value={specialRequests} onChange={(e) => setSpecialRequests(e.target.value)} className="rounded-xl resize-none min-h-[80px] text-sm" maxLength={500} />
-                  </div>
-                </div>
-
-                {nights > 0 && (
-                  <div className="border-t border-border pt-4 mb-5 space-y-2.5 text-sm">
-                    <div className="flex justify-between text-muted-foreground"><span>{formatINR(room.price)} × {nights} nights</span><span>{formatINR(subtotal)}</span></div>
-                    <div className="flex justify-between text-muted-foreground"><span>Service fee</span><span>{formatINR(serviceFee)}</span></div>
-                    <div className="flex justify-between font-medium text-foreground pt-3 border-t border-border"><span>Total</span><span className="text-primary font-heading text-lg">{formatINR(total)}</span></div>
-                  </div>
-                )}
-
-                <Button variant="gold" className="w-full py-6 rounded-xl text-sm tracking-wider uppercase" onClick={handleBooking} disabled={isSubmitting}>
-                  {isSubmitting ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Booking...</> : "Book Now"}
-                </Button>
-              </div>
-            </motion.div>
           </div>
         </div>
       </div>
