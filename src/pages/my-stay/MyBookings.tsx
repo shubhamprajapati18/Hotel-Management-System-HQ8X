@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { CalendarDays, Bed, Loader2, X, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatINR } from "@/lib/formatCurrency";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
