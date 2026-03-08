@@ -68,6 +68,7 @@ const sideNav = [
 
 export default function GuestDashboard() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["my-bookings", user?.id],
