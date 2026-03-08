@@ -28,6 +28,8 @@ import AdminStaff from "./pages/admin/AdminStaff";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminGuests from "./pages/admin/AdminGuests";
 import AdminOffers from "./pages/admin/AdminOffers";
+import AdminDining from "./pages/admin/AdminDining";
+import AdminContactSubmissions from "./pages/admin/AdminContactSubmissions";
 import Amenities from "./pages/Amenities";
 import Dining from "./pages/Dining";
 import Experiences from "./pages/Experiences";
