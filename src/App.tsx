@@ -17,6 +17,7 @@ import PaymentsPage from "./pages/my-stay/Payments";
 import NotificationsPage from "./pages/my-stay/Notifications";
 import ProfilePage from "./pages/my-stay/Profile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminServiceRequests from "./pages/admin/AdminServiceRequests";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminRooms from "./pages/admin/AdminRooms";
 import AdminHousekeeping from "./pages/admin/AdminHousekeeping";
@@ -71,6 +72,7 @@ const App = () => (
             <Route path="/admin/rooms" element={<ProtectedRoute adminOnly><AdminRooms /></ProtectedRoute>} />
             <Route path="/admin/guests" element={<ProtectedRoute adminOnly><AdminGuests /></ProtectedRoute>} />
             <Route path="/admin/housekeeping" element={<ProtectedRoute adminOnly><AdminHousekeeping /></ProtectedRoute>} />
+            <Route path="/admin/service-requests" element={<ProtectedRoute adminOnly><AdminServiceRequests /></ProtectedRoute>} />
             <Route path="/admin/maintenance" element={<ProtectedRoute adminOnly><AdminMaintenance /></ProtectedRoute>} />
             <Route path="/admin/payments" element={<ProtectedRoute adminOnly><AdminPayments /></ProtectedRoute>} />
             <Route path="/admin/reports" element={<ProtectedRoute adminOnly><AdminReports /></ProtectedRoute>} />
