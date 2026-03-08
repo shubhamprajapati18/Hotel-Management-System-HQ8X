@@ -1,10 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, CalendarDays, BedDouble, Users, SprayCan, Wrench,
-  CreditCard, BarChart3, UserCog, Settings, LogOut, ChevronLeft, Menu,
+  CreditCard, BarChart3, UserCog, Settings, LogOut, ChevronLeft, Menu, Moon, Sun,
 } from "lucide-react";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
