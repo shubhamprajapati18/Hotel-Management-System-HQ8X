@@ -84,6 +84,24 @@ export default function GuestDashboard() {
     enabled: !!user,
   });
 
+  const cancelBooking = useMutation({
+    mutationFn: async (bookingId: string) => {
+      const { error } = await supabase
+        .from("bookings")
+        .update({ status: "cancelled" })
+        .eq("id", bookingId)
+        .eq("user_id", user!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-bookings"] });
+      toast.success("Booking cancelled successfully.");
+    },
+    onError: () => {
+      toast.error("Failed to cancel booking. Please try again.");
+    },
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <GuestNav />
