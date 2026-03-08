@@ -1,6 +1,7 @@
 import { GuestNav } from "@/components/GuestNav";
 import { motion } from "framer-motion";
 import { Wifi, Waves, UtensilsCrossed, Dumbbell, Sparkles, Car, Wine, ShieldCheck, Baby, Flower2, Coffee, Shirt } from "lucide-react";
+import { Footer } from "@/components/Footer";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
