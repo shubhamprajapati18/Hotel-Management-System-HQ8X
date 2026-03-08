@@ -319,6 +319,47 @@ export type Database = {
           },
         ]
       }
+      room_reviews: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          rating: number
+          review_text: string | null
+          room_id: string
+          room_name: string
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          rating?: number
+          review_text?: string | null
+          room_id: string
+          room_name: string
+          user_id: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          review_text?: string | null
+          room_id?: string
+          room_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           amenities: string[] | null
@@ -488,6 +529,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      testimonials: {
+        Row: {
+          active: boolean
+          created_at: string
+          guest_image: string | null
+          guest_name: string
+          id: string
+          rating: number
+          review_text: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          guest_image?: string | null
+          guest_name: string
+          id?: string
+          rating?: number
+          review_text: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          guest_image?: string | null
+          guest_name?: string
+          id?: string
+          rating?: number
+          review_text?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
