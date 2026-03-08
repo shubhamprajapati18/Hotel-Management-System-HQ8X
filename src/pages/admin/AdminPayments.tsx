@@ -1,6 +1,8 @@
 import { AdminLayout } from "@/components/AdminLayout";
 import { motion } from "framer-motion";
-import { DollarSign, Loader2 } from "lucide-react";
+import { DollarSign, Loader2, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { exportToCSV } from "@/lib/exportCSV";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { format, parseISO, startOfDay, startOfWeek, startOfMonth } from "date-fns";
