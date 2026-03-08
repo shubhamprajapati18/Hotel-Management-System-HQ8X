@@ -181,7 +181,8 @@ export default function AdminReservations() {
                 return (
                   <tr
                     key={r.fullId}
-                    className="border-b border-border/50 hover:bg-secondary/30 transition-colors"
+                    className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer"
+                    onClick={() => setSelectedBooking(r.fullId)}
                   >
                     <td className="py-3 px-4 font-mono text-xs text-muted-foreground">{r.id}</td>
                     <td className="py-3 px-4 font-medium text-foreground">{r.guest}</td>
@@ -212,9 +213,7 @@ export default function AdminReservations() {
                     </td>
                     <td className="py-3 px-4 text-right font-semibold text-primary">{r.amountFormatted}</td>
                     <td className="py-3 px-4">
-                      <Button variant="ghost" size="icon" onClick={() => setSelectedBooking(r.fullId)}>
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </td>
                   </tr>
                 );
@@ -226,7 +225,7 @@ export default function AdminReservations() {
 
       {/* Reservation Detail Modal */}
       <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-y-auto">
           {selected && (
             <>
               <DialogHeader>
@@ -251,7 +250,7 @@ export default function AdminReservations() {
                 {/* Stay Details */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Stay Details</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="flex items-center gap-2">
                       <BedDouble className="h-4 w-4 text-muted-foreground" />
                       <div>
