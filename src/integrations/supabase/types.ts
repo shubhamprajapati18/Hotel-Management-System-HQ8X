@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          check_in: string
+          check_out: string
+          created_at: string
+          guests: number
+          id: string
+          room_id: string
+          room_name: string
+          special_requests: string | null
+          status: string
+          total_price: number
+          user_id: string
+        }
+        Insert: {
+          check_in: string
+          check_out: string
+          created_at?: string
+          guests?: number
+          id?: string
+          room_id: string
+          room_name: string
+          special_requests?: string | null
+          status?: string
+          total_price: number
+          user_id: string
+        }
+        Update: {
+          check_in?: string
+          check_out?: string
+          created_at?: string
+          guests?: number
+          id?: string
+          room_id?: string
+          room_name?: string
+          special_requests?: string | null
+          status?: string
+          total_price?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
