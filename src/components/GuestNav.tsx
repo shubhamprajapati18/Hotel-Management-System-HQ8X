@@ -172,6 +172,7 @@ export function GuestNav() {
                 )}
               </AnimatePresence>
             </div>
+            </>
           ) : (
             <>
               <Link to="/login">
