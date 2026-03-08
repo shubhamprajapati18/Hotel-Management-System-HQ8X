@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { CalendarDays, Bell, CreditCard, User, Bed, ConciergeBell, Wrench, SprayCan, Clock, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const bookings = [
   { id: 1, room: "Ocean View Suite", checkIn: "Mar 15, 2026", checkOut: "Mar 19, 2026", status: "Confirmed", price: 1800 },
@@ -11,9 +12,9 @@ const bookings = [
 ];
 
 const statusColor: Record<string, string> = {
-  Confirmed: "bg-accent/20 text-accent",
-  Upcoming: "bg-primary/20 text-primary",
-  Completed: "bg-muted text-muted-foreground",
+  Confirmed: "border-accent/30 text-accent bg-accent/10",
+  Upcoming: "border-primary/30 text-primary bg-primary/10",
+  Completed: "border-border text-muted-foreground bg-muted/30",
 };
 
 const quickActions = [
@@ -24,7 +25,7 @@ const quickActions = [
 ];
 
 const sideNav = [
-  { icon: Bed, label: "My Bookings" },
+  { icon: Bed, label: "My Bookings", active: true },
   { icon: ConciergeBell, label: "Room Services" },
   { icon: SprayCan, label: "Housekeeping" },
   { icon: Wrench, label: "Maintenance" },
@@ -37,23 +38,36 @@ export default function GuestDashboard() {
   return (
     <div className="min-h-screen bg-background">
       <GuestNav />
-      <div className="pt-28 pb-16 px-6">
-        <div className="container mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-            <p className="text-primary tracking-[0.2em] uppercase text-sm mb-1">Welcome back</p>
-            <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground">My Stay</h1>
+      <div className="pt-32 pb-20 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="mb-12"
+          >
+            <p className="text-primary/70 tracking-[0.3em] uppercase text-[11px] mb-2 font-medium">Welcome back</p>
+            <h1 className="font-heading text-4xl md:text-5xl font-medium text-foreground tracking-tight">My Stay</h1>
           </motion.div>
 
-          <div className="grid lg:grid-cols-[240px_1fr] gap-8">
+          <div className="grid lg:grid-cols-[220px_1fr] gap-10">
             {/* Side Nav */}
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="hidden lg:block">
-              <div className="glass-panel rounded-xl p-4 space-y-1 sticky top-28">
-                {sideNav.map((item, i) => (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="hidden lg:block"
+            >
+              <div className="rounded-2xl border border-border/40 bg-card/50 p-3 space-y-1 sticky top-28">
+                {sideNav.map((item) => (
                   <button
                     key={item.label}
-                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm transition-colors ${
-                      i === 0 ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    }`}
+                    className={cn(
+                      "flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm transition-all duration-300",
+                      item.active
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                    )}
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
@@ -63,44 +77,57 @@ export default function GuestDashboard() {
             </motion.div>
 
             {/* Main Content */}
-            <div className="space-y-8">
+            <div className="space-y-10">
               {/* Quick Actions */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                <h2 className="font-heading text-xl font-semibold text-foreground mb-4">Quick Actions</h2>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.7 }}
+              >
+                <h2 className="font-heading text-2xl font-medium text-foreground mb-5 tracking-tight">Quick Actions</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {quickActions.map((a) => (
                     <button
                       key={a.label}
                       onClick={a.action}
-                      className="glass-panel rounded-xl p-5 text-center hover-lift cursor-pointer group"
+                      className="rounded-2xl border border-border/40 bg-card/50 p-6 text-center hover-lift cursor-pointer group transition-all duration-500"
                     >
-                      <a.icon className="h-6 w-6 text-primary mx-auto mb-2 group-hover:scale-110 transition-transform" />
-                      <p className="text-xs font-medium text-foreground/80">{a.label}</p>
+                      <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 transition-colors duration-500">
+                        <a.icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <p className="text-xs font-medium text-foreground/60 tracking-wide">{a.label}</p>
                     </button>
                   ))}
                 </div>
               </motion.div>
 
               {/* Bookings */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                <h2 className="font-heading text-xl font-semibold text-foreground mb-4">My Bookings</h2>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.7 }}
+              >
+                <h2 className="font-heading text-2xl font-medium text-foreground mb-5 tracking-tight">My Bookings</h2>
                 <div className="space-y-4">
                   {bookings.map((b) => (
-                    <div key={b.id} className="glass-panel rounded-xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover-lift">
+                    <div
+                      key={b.id}
+                      className="rounded-2xl border border-border/40 bg-card/50 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover-lift"
+                    >
                       <div className="flex-1">
-                        <h3 className="font-heading text-lg font-semibold text-foreground">{b.room}</h3>
-                        <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-                          <CalendarDays className="h-3.5 w-3.5" />
+                        <h3 className="font-heading text-xl font-medium text-foreground tracking-tight">{b.room}</h3>
+                        <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground tracking-wide">
+                          <CalendarDays className="h-3.5 w-3.5 text-primary/50" />
                           {b.checkIn} — {b.checkOut}
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColor[b.status]}`}>
+                      <div className="flex items-center gap-5">
+                        <span className={cn("px-3 py-1 rounded-full text-[10px] tracking-wider uppercase font-medium border", statusColor[b.status])}>
                           {b.status}
                         </span>
-                        <span className="text-lg font-bold text-primary">${b.price}</span>
+                        <span className="text-lg font-heading font-semibold text-primary">${b.price}</span>
                         <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                          <ChevronRight className="h-5 w-5" />
+                          <ChevronRight className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -109,17 +136,23 @@ export default function GuestDashboard() {
               </motion.div>
 
               {/* Notifications */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                <h2 className="font-heading text-xl font-semibold text-foreground mb-4">Recent Notifications</h2>
-                <div className="glass-panel rounded-xl p-5 space-y-3">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.7 }}
+              >
+                <h2 className="font-heading text-2xl font-medium text-foreground mb-5 tracking-tight">Notifications</h2>
+                <div className="rounded-2xl border border-border/40 bg-card/50 p-6 space-y-4">
                   {[
                     "Your Ocean View Suite booking is confirmed for Mar 15.",
                     "Room service menu updated — new spring specialties available.",
                     "Spa appointment available: Book your relaxation session today.",
                   ].map((n, i) => (
-                    <div key={i} className="flex items-start gap-3 pb-3 border-b border-border last:border-0 last:pb-0">
-                      <Bell className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <p className="text-sm text-foreground/80">{n}</p>
+                    <div key={i} className="flex items-start gap-4 pb-4 border-b border-border/30 last:border-0 last:pb-0">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 shrink-0">
+                        <Bell className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <p className="text-sm text-foreground/60 leading-relaxed">{n}</p>
                     </div>
                   ))}
                 </div>

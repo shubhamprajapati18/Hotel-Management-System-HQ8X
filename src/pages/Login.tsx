@@ -18,7 +18,6 @@ export default function Login() {
       toast.error("Please fill in all fields");
       return;
     }
-    // Demo: admin@hq8x.com → admin, else guest
     if (email.includes("admin")) {
       toast.success("Welcome back, Admin!");
       navigate("/admin");
@@ -31,59 +30,64 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-sm"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           <Link to="/">
-            <span className="font-heading text-3xl font-bold gradient-gold-text">HQ8X</span>
+            <span className="font-heading text-3xl font-medium tracking-wide gradient-gold-text">HQ8X</span>
           </Link>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground text-sm mt-3">
             {isSignUp ? "Create your account" : "Sign in to your account"}
           </p>
         </div>
 
-        <div className="glass-panel rounded-2xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="rounded-2xl border border-border/40 bg-card/50 p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="email" className="text-foreground/80 text-sm">Email</Label>
+              <Label htmlFor="email" className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="guest@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 bg-secondary border-border"
+                className="mt-2 bg-secondary/50 border-border/40 h-12 rounded-xl"
               />
             </div>
             <div>
-              <Label htmlFor="password" className="text-foreground/80 text-sm">Password</Label>
+              <Label htmlFor="password" className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium">
+                Password
+              </Label>
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 bg-secondary border-border"
+                className="mt-2 bg-secondary/50 border-border/40 h-12 rounded-xl"
               />
             </div>
-            <Button variant="luxury" className="w-full py-6" type="submit">
+            <Button variant="luxury" className="w-full py-6 rounded-xl text-sm tracking-wider uppercase" type="submit">
               {isSignUp ? "Create Account" : "Sign In"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <button
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-300"
               onClick={() => setIsSignUp(!isSignUp)}
             >
               {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
             </button>
           </div>
 
-          <p className="text-xs text-muted-foreground text-center mt-4">
-            Demo: use <span className="text-primary">admin@hq8x.com</span> for admin, any other email for guest.
+          <p className="text-[10px] text-muted-foreground/50 text-center mt-5 tracking-wide">
+            Demo: use <span className="text-primary/60">admin@hq8x.com</span> for admin, any other for guest
           </p>
         </div>
       </motion.div>
