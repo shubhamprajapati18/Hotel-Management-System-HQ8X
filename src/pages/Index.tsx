@@ -71,7 +71,7 @@ export default function Index() {
               </Button>
             </Link>
             <Link to="/rooms">
-              <Button size="lg" className="text-sm px-10 py-6 tracking-wider uppercase font-medium border border-white/20 text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm w-full sm:w-auto">
+              <Button size="lg" className="text-sm px-10 py-6 tracking-wider uppercase font-medium border-2 border-primary/50 text-primary-foreground bg-primary/20 hover:bg-primary/35 backdrop-blur-sm w-full sm:w-auto">
                 Book Your Stay
               </Button>
             </Link>
@@ -117,7 +117,7 @@ export default function Index() {
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
                       <div className="absolute top-4 left-4">
-                        <span className="text-[10px] tracking-[0.2em] uppercase font-medium text-primary bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-primary/15">
+                        <span className="text-[10px] tracking-[0.2em] uppercase font-medium text-primary bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-primary/15">
                           {room.category}
                         </span>
                       </div>
@@ -214,7 +214,7 @@ export default function Index() {
               Let us craft an unforgettable experience tailored to your desires. Every moment, perfectly curated.
             </p>
             <Link to="/rooms">
-              <Button variant="luxury" size="lg" className="text-sm px-12 py-6 tracking-wider uppercase font-medium">
+              <Button variant="gold" size="lg" className="text-sm px-12 py-6 tracking-wider uppercase font-medium">
                 Reserve Your Stay
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>

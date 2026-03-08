@@ -31,7 +31,7 @@ export function GuestNav() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         scrolled
-          ? "py-3 bg-white/80 backdrop-blur-xl border-b border-border shadow-sm"
+          ? "py-3 bg-background/90 backdrop-blur-xl border-b border-border shadow-[0_2px_20px_hsla(40,10%,10%,0.06)]"
           : "py-5 md:py-6 bg-transparent"
       )}
     >
@@ -106,7 +106,7 @@ export function GuestNav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-border shadow-lg"
+            className="lg:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border shadow-lg"
           >
             <div className="flex flex-col px-6 py-6 gap-4">
               {navItems.map((item) => (

@@ -157,7 +157,7 @@ export default function RoomDetail() {
                 )}
 
                 <Button
-                  variant="luxury"
+                  variant="gold"
                   className="w-full py-6 rounded-xl text-sm tracking-wider uppercase"
                   onClick={() => {
                     if (!checkIn || !checkOut) {
