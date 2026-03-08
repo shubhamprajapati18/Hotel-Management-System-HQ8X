@@ -1,6 +1,7 @@
 import { GuestNav } from "@/components/GuestNav";
 import { motion } from "framer-motion";
 import { Compass, Sunrise, Palette, Ship, Mountain, Music, ArrowRight } from "lucide-react";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
