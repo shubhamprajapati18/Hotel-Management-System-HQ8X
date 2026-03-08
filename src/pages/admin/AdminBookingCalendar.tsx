@@ -103,7 +103,8 @@ export default function AdminBookingCalendar() {
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+          </div>
+          </div>
       </motion.div>
 
       {/* Legend */}
