@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { formatINR } from "@/lib/formatCurrency";
 import { GuestNav } from "@/components/GuestNav";
 import { Button } from "@/components/ui/button";
 import { rooms as staticRooms } from "@/data/rooms";
