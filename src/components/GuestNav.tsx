@@ -29,31 +29,34 @@ export function GuestNav() {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-700",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         scrolled
-          ? "py-3 bg-background/80 backdrop-blur-xl border-b border-border/50"
-          : "py-6 bg-transparent"
+          ? "py-3 bg-white/80 backdrop-blur-xl border-b border-border shadow-sm"
+          : "py-5 md:py-6 bg-transparent"
       )}
     >
-      <div className="container mx-auto flex items-center justify-between px-6 lg:px-10">
+      <div className="container mx-auto flex items-center justify-between px-5 md:px-6 lg:px-10">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <span className="font-heading text-2xl font-semibold tracking-wide gradient-gold-text">
+          <span className={cn(
+            "font-heading text-xl md:text-2xl font-semibold tracking-wide transition-colors duration-500",
+            scrolled ? "gradient-gold-text" : "text-white"
+          )}>
             HQ8X
           </span>
         </Link>
 
-        {/* Desktop Nav — Centered */}
-        <div className="hidden lg:flex items-center gap-10">
+        {/* Desktop Nav */}
+        <div className="hidden lg:flex items-center gap-8 xl:gap-10">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={cn(
-                "nav-link-underline text-[11px] font-medium tracking-[0.2em] uppercase pb-1 transition-colors duration-300",
-                location.pathname === item.path
-                  ? "text-primary active"
-                  : "text-foreground/50 hover:text-foreground/80"
+                "nav-link-underline text-[11px] font-medium tracking-[0.18em] uppercase pb-1 transition-colors duration-300",
+                scrolled
+                  ? (location.pathname === item.path ? "text-primary active" : "text-foreground/50 hover:text-foreground")
+                  : (location.pathname === item.path ? "text-white active" : "text-white/60 hover:text-white")
               )}
             >
               {item.label}
@@ -62,15 +65,25 @@ export function GuestNav() {
         </div>
 
         {/* Right Actions */}
-        <div className="hidden lg:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-3">
           <Link to="/my-stay">
-            <Button variant="ghost" size="sm" className="text-foreground/50 hover:text-primary text-xs tracking-wider uppercase">
+            <Button variant="ghost" size="sm" className={cn(
+              "text-xs tracking-wider uppercase transition-colors duration-300",
+              scrolled ? "text-foreground/50 hover:text-primary" : "text-white/60 hover:text-white hover:bg-white/10"
+            )}>
               <User className="h-3.5 w-3.5 mr-1.5" />
               My Stay
             </Button>
           </Link>
           <Link to="/login">
-            <Button variant="gold-outline" size="sm" className="text-xs tracking-wider uppercase px-5">
+            <Button
+              variant={scrolled ? "gold-outline" : "outline"}
+              size="sm"
+              className={cn(
+                "text-xs tracking-wider uppercase px-5 transition-all duration-300",
+                !scrolled && "border-white/30 text-white hover:bg-white/10 hover:border-white/50"
+              )}
+            >
               Sign In
             </Button>
           </Link>
@@ -78,7 +91,7 @@ export function GuestNav() {
 
         {/* Mobile toggle */}
         <button
-          className="lg:hidden text-foreground/70"
+          className={cn("lg:hidden transition-colors", scrolled ? "text-foreground" : "text-white")}
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -89,35 +102,33 @@ export function GuestNav() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border/50"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="lg:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-border shadow-lg"
           >
-            <div className="flex flex-col px-8 py-8 gap-5">
+            <div className="flex flex-col px-6 py-6 gap-4">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "text-xs font-medium tracking-[0.2em] uppercase transition-colors duration-300",
-                    location.pathname === item.path
-                      ? "text-primary"
-                      : "text-foreground/50 hover:text-foreground"
+                    "text-xs font-medium tracking-[0.18em] uppercase transition-colors duration-300",
+                    location.pathname === item.path ? "text-primary" : "text-foreground/50 hover:text-foreground"
                   )}
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="h-px bg-border/50 my-2" />
+              <div className="h-px bg-border my-1" />
               <div className="flex gap-3">
                 <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1">
                   <Button variant="gold-outline" className="w-full text-xs tracking-wider uppercase">Sign In</Button>
                 </Link>
                 <Link to="/my-stay" onClick={() => setMobileOpen(false)} className="flex-1">
-                  <Button variant="ghost" className="w-full text-xs tracking-wider uppercase text-foreground/60">My Stay</Button>
+                  <Button variant="ghost" className="w-full text-xs tracking-wider uppercase text-foreground/50">My Stay</Button>
                 </Link>
               </div>
             </div>

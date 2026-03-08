@@ -29,27 +29,23 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 h-screen z-40 flex flex-col border-r border-border/40 transition-all duration-500",
-          collapsed ? "w-[72px]" : "w-[260px]"
+          "fixed top-0 left-0 h-screen z-40 flex flex-col bg-card border-r border-border transition-all duration-400",
+          collapsed ? "w-[68px]" : "w-[250px]"
         )}
-        style={{ background: "hsl(var(--sidebar-background))" }}
       >
-        <div className="flex items-center justify-between px-5 py-6 border-b border-border/30">
+        <div className="flex items-center justify-between px-4 py-5 border-b border-border">
           {!collapsed && (
             <Link to="/admin" className="flex items-center gap-2">
               <span className="font-heading text-xl font-medium tracking-wide gradient-gold-text">HQ8X</span>
-              <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/60 font-medium">Admin</span>
+              <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground font-medium">Admin</span>
             </Link>
           )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="text-muted-foreground/50 hover:text-foreground transition-colors duration-300"
-          >
-            {collapsed ? <Menu className="h-4.5 w-4.5" /> : <ChevronLeft className="h-4.5 w-4.5" />}
+          <button onClick={() => setCollapsed(!collapsed)} className="text-muted-foreground hover:text-foreground transition-colors duration-300">
+            {collapsed ? <Menu className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
         </div>
 
-        <nav className="flex-1 py-5 px-3 space-y-0.5 overflow-y-auto">
+        <nav className="flex-1 py-4 px-2.5 space-y-0.5 overflow-y-auto">
           {navItems.map((item) => {
             const active = location.pathname === item.path;
             return (
@@ -59,21 +55,21 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300",
                   active
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground/70 hover:text-foreground hover:bg-secondary/40"
+                    ? "bg-primary/8 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 )}
               >
-                <item.icon className="h-[18px] w-[18px] shrink-0" />
+                <item.icon className="h-[17px] w-[17px] shrink-0" />
                 {!collapsed && <span>{item.label}</span>}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-3 border-t border-border/30">
+        <div className="p-2.5 border-t border-border">
           <Link to="/">
-            <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] text-muted-foreground/60 hover:text-destructive transition-colors duration-300 w-full">
-              <LogOut className="h-[18px] w-[18px] shrink-0" />
+            <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] text-muted-foreground hover:text-destructive transition-colors duration-300 w-full">
+              <LogOut className="h-[17px] w-[17px] shrink-0" />
               {!collapsed && <span>Sign Out</span>}
             </button>
           </Link>
@@ -81,17 +77,15 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main */}
-      <main className={cn("flex-1 transition-all duration-500", collapsed ? "ml-[72px]" : "ml-[260px]")}>
-        <header className="sticky top-0 z-30 h-16 flex items-center px-8 border-b border-border/30 bg-background/80 backdrop-blur-xl">
+      <main className={cn("flex-1 transition-all duration-400", collapsed ? "ml-[68px]" : "ml-[250px]")}>
+        <header className="sticky top-0 z-30 h-14 flex items-center px-6 md:px-8 border-b border-border bg-background/80 backdrop-blur-xl">
           <div className="flex-1" />
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-heading font-semibold">
-              A
-            </div>
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-heading font-semibold">A</div>
             {!collapsed && <span className="text-[13px] font-medium text-foreground/70">Admin</span>}
           </div>
         </header>
-        <div className="p-8">{children}</div>
+        <div className="p-5 md:p-8">{children}</div>
       </main>
     </div>
   );

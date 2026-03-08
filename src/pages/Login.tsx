@@ -28,14 +28,14 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-6">
+    <div className="min-h-screen bg-background flex items-center justify-center px-5 md:px-6">
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.7 }}
         className="w-full max-w-sm"
       >
-        <div className="text-center mb-10">
+        <div className="text-center mb-8 md:mb-10">
           <Link to="/">
             <span className="font-heading text-3xl font-medium tracking-wide gradient-gold-text">HQ8X</span>
           </Link>
@@ -44,32 +44,28 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-border/40 bg-card/50 p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="rounded-2xl border border-border bg-card p-7 md:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
             <div>
-              <Label htmlFor="email" className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium">
-                Email
-              </Label>
+              <Label htmlFor="email" className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium">Email</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="guest@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-2 bg-secondary/50 border-border/40 h-12 rounded-xl"
+                className="mt-2 bg-secondary/50 border-border h-11 md:h-12 rounded-xl"
               />
             </div>
             <div>
-              <Label htmlFor="password" className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium">
-                Password
-              </Label>
+              <Label htmlFor="password" className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-medium">Password</Label>
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-2 bg-secondary/50 border-border/40 h-12 rounded-xl"
+                className="mt-2 bg-secondary/50 border-border h-11 md:h-12 rounded-xl"
               />
             </div>
             <Button variant="luxury" className="w-full py-6 rounded-xl text-sm tracking-wider uppercase" type="submit">
@@ -77,7 +73,7 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-5 md:mt-6 text-center">
             <button
               className="text-xs text-muted-foreground hover:text-primary transition-colors duration-300"
               onClick={() => setIsSignUp(!isSignUp)}
@@ -86,8 +82,8 @@ export default function Login() {
             </button>
           </div>
 
-          <p className="text-[10px] text-muted-foreground/50 text-center mt-5 tracking-wide">
-            Demo: use <span className="text-primary/60">admin@hq8x.com</span> for admin, any other for guest
+          <p className="text-[10px] text-muted-foreground/50 text-center mt-4 md:mt-5 tracking-wide">
+            Demo: use <span className="text-primary/70">admin@hq8x.com</span> for admin, any other for guest
           </p>
         </div>
       </motion.div>

@@ -4,9 +4,9 @@ import { TrendingUp, Users, BedDouble, DollarSign, SprayCan, CalendarCheck } fro
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
 
 const kpis = [
-  { label: "Total Bookings", value: "1,248", change: "+12%", icon: CalendarCheck, accent: true },
+  { label: "Total Bookings", value: "1,248", change: "+12%", icon: CalendarCheck },
   { label: "Occupancy Rate", value: "87%", change: "+5%", icon: BedDouble, emerald: true },
-  { label: "Revenue Today", value: "$24,580", change: "+8%", icon: DollarSign, accent: true },
+  { label: "Revenue Today", value: "$24,580", change: "+8%", icon: DollarSign },
   { label: "Available Rooms", value: "23", change: "", icon: BedDouble },
   { label: "Pending Tasks", value: "7", change: "-3", icon: SprayCan, destructive: true },
   { label: "Upcoming Check-ins", value: "15", change: "", icon: Users, emerald: true },
@@ -25,9 +25,9 @@ const occupancyData = [
 ];
 
 const roomTypeData = [
-  { name: "Suite", value: 35, color: "hsl(43, 76%, 52%)" },
-  { name: "Deluxe", value: 45, color: "hsl(142, 71%, 45%)" },
-  { name: "Penthouse", value: 20, color: "hsl(240, 4%, 40%)" },
+  { name: "Suite", value: 35, color: "hsl(43, 76%, 46%)" },
+  { name: "Deluxe", value: 45, color: "hsl(142, 60%, 40%)" },
+  { name: "Penthouse", value: 20, color: "hsl(240, 5%, 65%)" },
 ];
 
 const recentBookings = [
@@ -38,38 +38,39 @@ const recentBookings = [
 ];
 
 const tooltipStyle = {
-  background: "hsl(240, 5%, 9%)",
-  border: "1px solid hsl(240, 4%, 16%)",
-  borderRadius: 12,
-  color: "hsl(40, 14%, 96%)",
+  background: "hsl(0, 0%, 100%)",
+  border: "1px solid hsl(40, 10%, 90%)",
+  borderRadius: 10,
+  color: "hsl(240, 10%, 10%)",
   fontSize: 12,
+  boxShadow: "0 4px 16px hsla(240, 10%, 10%, 0.08)",
 };
 
 export default function AdminDashboard() {
   return (
     <AdminLayout>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-        <h1 className="font-heading text-3xl font-medium text-foreground mb-1 tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground text-sm mb-10">Welcome back. Here's your hotel overview.</p>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <h1 className="font-heading text-2xl md:text-3xl font-medium text-foreground mb-1 tracking-tight">Dashboard</h1>
+        <p className="text-muted-foreground text-sm mb-8 md:mb-10">Welcome back. Here's your hotel overview.</p>
       </motion.div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4 mb-8 md:mb-10">
         {kpis.map((kpi, i) => (
           <motion.div
             key={kpi.label}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05, duration: 0.6 }}
-            className="rounded-2xl border border-border/40 bg-card/50 p-5 hover-lift"
+            transition={{ delay: i * 0.04, duration: 0.5 }}
+            className="rounded-2xl border border-border bg-card p-4 md:p-5 hover-lift"
           >
-            <div className="h-9 w-9 rounded-xl bg-primary/8 flex items-center justify-center mb-4">
-              <kpi.icon className={`h-4.5 w-4.5 ${kpi.destructive ? 'text-destructive' : kpi.emerald ? 'text-accent' : 'text-primary'}`} />
+            <div className="h-8 w-8 md:h-9 md:w-9 rounded-xl bg-primary/8 flex items-center justify-center mb-3 md:mb-4">
+              <kpi.icon className={`h-4 w-4 ${kpi.destructive ? 'text-destructive' : kpi.emerald ? 'text-accent' : 'text-primary'}`} />
             </div>
-            <p className="text-2xl font-heading font-semibold text-foreground tracking-tight">{kpi.value}</p>
-            <p className="text-[11px] text-muted-foreground mt-1 tracking-wide">{kpi.label}</p>
+            <p className="text-xl md:text-2xl font-heading font-semibold text-foreground tracking-tight">{kpi.value}</p>
+            <p className="text-[10px] md:text-[11px] text-muted-foreground mt-1 tracking-wide">{kpi.label}</p>
             {kpi.change && (
-              <span className={`text-[11px] mt-1.5 block font-medium ${kpi.destructive ? 'text-destructive' : 'text-accent'}`}>
+              <span className={`text-[10px] md:text-[11px] mt-1 block font-medium ${kpi.destructive ? 'text-destructive' : 'text-accent'}`}>
                 {kpi.change}
               </span>
             )}
@@ -78,56 +79,40 @@ export default function AdminDashboard() {
       </div>
 
       {/* Charts */}
-      <div className="grid lg:grid-cols-2 gap-6 mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.7 }}
-          className="rounded-2xl border border-border/40 bg-card/50 p-6"
-        >
-          <h3 className="font-heading text-lg font-medium text-foreground mb-5 tracking-tight">Monthly Revenue</h3>
-          <ResponsiveContainer width="100%" height={250}>
+      <div className="grid lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.6 }} className="rounded-2xl border border-border bg-card p-5 md:p-6">
+          <h3 className="font-heading text-lg font-medium text-foreground mb-4 md:mb-5 tracking-tight">Monthly Revenue</h3>
+          <ResponsiveContainer width="100%" height={220}>
             <BarChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240, 4%, 14%)" />
-              <XAxis dataKey="month" stroke="hsl(220, 9%, 40%)" fontSize={11} />
-              <YAxis stroke="hsl(220, 9%, 40%)" fontSize={11} tickFormatter={(v) => `$${v / 1000}k`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(40, 10%, 92%)" />
+              <XAxis dataKey="month" stroke="hsl(240, 5%, 60%)" fontSize={11} />
+              <YAxis stroke="hsl(240, 5%, 60%)" fontSize={11} tickFormatter={(v) => `$${v / 1000}k`} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Bar dataKey="revenue" fill="hsl(43, 76%, 52%)" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="revenue" fill="hsl(43, 76%, 46%)" radius={[5, 5, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.7 }}
-          className="rounded-2xl border border-border/40 bg-card/50 p-6"
-        >
-          <h3 className="font-heading text-lg font-medium text-foreground mb-5 tracking-tight">Weekly Occupancy</h3>
-          <ResponsiveContainer width="100%" height={250}>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} className="rounded-2xl border border-border bg-card p-5 md:p-6">
+          <h3 className="font-heading text-lg font-medium text-foreground mb-4 md:mb-5 tracking-tight">Weekly Occupancy</h3>
+          <ResponsiveContainer width="100%" height={220}>
             <LineChart data={occupancyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240, 4%, 14%)" />
-              <XAxis dataKey="day" stroke="hsl(220, 9%, 40%)" fontSize={11} />
-              <YAxis stroke="hsl(220, 9%, 40%)" fontSize={11} tickFormatter={(v) => `${v}%`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(40, 10%, 92%)" />
+              <XAxis dataKey="day" stroke="hsl(240, 5%, 60%)" fontSize={11} />
+              <YAxis stroke="hsl(240, 5%, 60%)" fontSize={11} tickFormatter={(v) => `${v}%`} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Line type="monotone" dataKey="rate" stroke="hsl(142, 71%, 45%)" strokeWidth={2} dot={{ fill: "hsl(142, 71%, 45%)", r: 3 }} />
+              <Line type="monotone" dataKey="rate" stroke="hsl(142, 60%, 40%)" strokeWidth={2} dot={{ fill: "hsl(142, 60%, 40%)", r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </motion.div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Room Distribution */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.7 }}
-          className="rounded-2xl border border-border/40 bg-card/50 p-6"
-        >
-          <h3 className="font-heading text-lg font-medium text-foreground mb-5 tracking-tight">Room Distribution</h3>
-          <ResponsiveContainer width="100%" height={200}>
+      <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.6 }} className="rounded-2xl border border-border bg-card p-5 md:p-6">
+          <h3 className="font-heading text-lg font-medium text-foreground mb-4 md:mb-5 tracking-tight">Room Distribution</h3>
+          <ResponsiveContainer width="100%" height={180}>
             <PieChart>
-              <Pie data={roomTypeData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} dataKey="value" paddingAngle={3} strokeWidth={0}>
+              <Pie data={roomTypeData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} dataKey="value" paddingAngle={3} strokeWidth={0}>
                 {roomTypeData.map((entry) => (
                   <Cell key={entry.name} fill={entry.color} />
                 ))}
@@ -135,7 +120,7 @@ export default function AdminDashboard() {
               <Tooltip contentStyle={tooltipStyle} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="flex justify-center gap-5 mt-3">
+          <div className="flex justify-center gap-4 md:gap-5 mt-2">
             {roomTypeData.map((d) => (
               <div key={d.name} className="flex items-center gap-2 text-[11px] text-muted-foreground">
                 <div className="h-2 w-2 rounded-full" style={{ background: d.color }} />
@@ -145,19 +130,13 @@ export default function AdminDashboard() {
           </div>
         </motion.div>
 
-        {/* Recent Bookings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.7 }}
-          className="rounded-2xl border border-border/40 bg-card/50 p-6 lg:col-span-2"
-        >
-          <h3 className="font-heading text-lg font-medium text-foreground mb-5 tracking-tight">Recent Bookings</h3>
-          <div className="space-y-3">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="rounded-2xl border border-border bg-card p-5 md:p-6 lg:col-span-2">
+          <h3 className="font-heading text-lg font-medium text-foreground mb-4 md:mb-5 tracking-tight">Recent Bookings</h3>
+          <div className="space-y-2.5">
             {recentBookings.map((b, i) => (
-              <div key={i} className="flex items-center justify-between p-3.5 rounded-xl bg-secondary/20 border border-border/20">
+              <div key={i} className="flex items-center justify-between p-3 md:p-3.5 rounded-xl bg-secondary/50 border border-border/50">
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-heading font-semibold">
+                  <div className="h-8 w-8 md:h-9 md:w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-heading font-semibold">
                     {b.guest[0]}
                   </div>
                   <div>
@@ -167,9 +146,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="text-right">
                   <p className="text-[11px] text-muted-foreground">{b.checkIn}</p>
-                  <span className={`text-[11px] font-medium ${b.status === "Confirmed" ? "text-accent" : "text-primary"}`}>
-                    {b.status}
-                  </span>
+                  <span className={`text-[11px] font-medium ${b.status === "Confirmed" ? "text-accent" : "text-primary"}`}>{b.status}</span>
                 </div>
               </div>
             ))}
