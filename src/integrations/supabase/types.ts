@@ -122,6 +122,38 @@ export type Database = {
         }
         Relationships: []
       }
+      room_images: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          room_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          room_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          room_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_images_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           amenities: string[] | null
