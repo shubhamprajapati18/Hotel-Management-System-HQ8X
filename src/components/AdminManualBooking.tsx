@@ -105,7 +105,7 @@ export function AdminManualBooking() {
                 <SelectTrigger><SelectValue placeholder="Select a room" /></SelectTrigger>
                 <SelectContent>
                   {rooms.map((r) => (
-                    <SelectItem key={r.id} value={r.id}>{r.name} — ₹{r.price}/night ({r.category})</SelectItem>
+                    <SelectItem key={r.id} value={r.id}>{r.name} — {formatINR(r.price)}/night ({r.category})</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
