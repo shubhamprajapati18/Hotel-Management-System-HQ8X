@@ -61,6 +61,17 @@ export default function MyBookings() {
     enabled: !!user,
   });
 
+  // Fetch existing reviews by this user
+  const { data: myReviews = [] } = useQuery({
+    queryKey: ["my-reviews", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("room_reviews").select("booking_id").eq("user_id", user!.id);
+      if (error) return [];
+      return data.map((r) => r.booking_id);
+    },
+    enabled: !!user,
+  });
+
   const cancelBooking = useMutation({
     mutationFn: async (bookingId: string) => {
       const { error } = await supabase
