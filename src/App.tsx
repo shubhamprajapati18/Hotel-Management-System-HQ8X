@@ -25,6 +25,7 @@ import Dining from "./pages/Dining";
 import Experiences from "./pages/Experiences";
 import Offers from "./pages/Offers";
 import Contact from "./pages/Contact";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
