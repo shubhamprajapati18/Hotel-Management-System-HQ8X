@@ -58,6 +58,11 @@ export function MyStayLayout({ children }: { children: ReactNode }) {
                     >
                       <item.icon className="h-4 w-4" />
                       {item.label}
+                      {item.label === "Notifications" && unreadCount > 0 && (
+                        <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}
