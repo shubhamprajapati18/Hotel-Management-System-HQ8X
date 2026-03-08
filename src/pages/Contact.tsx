@@ -2,6 +2,7 @@ import { GuestNav } from "@/components/GuestNav";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/Footer";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
