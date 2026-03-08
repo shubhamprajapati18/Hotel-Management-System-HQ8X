@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Bed, ConciergeBell, SprayCan, Wrench, CreditCard, Bell, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 
 const sideNav = [
   { icon: Bed, label: "My Bookings", path: "/my-stay" },
