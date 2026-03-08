@@ -403,10 +403,14 @@ export type Database = {
           department: string
           email: string | null
           id: string
+          join_date: string
           name: string
           notes: string | null
+          pay_day: number
           phone: string | null
           role: string
+          salary: number
+          salary_paid: boolean
           shift: string
           status: string
           updated_at: string
@@ -416,10 +420,14 @@ export type Database = {
           department?: string
           email?: string | null
           id?: string
+          join_date?: string
           name: string
           notes?: string | null
+          pay_day?: number
           phone?: string | null
           role?: string
+          salary?: number
+          salary_paid?: boolean
           shift?: string
           status?: string
           updated_at?: string
@@ -429,15 +437,57 @@ export type Database = {
           department?: string
           email?: string | null
           id?: string
+          join_date?: string
           name?: string
           notes?: string | null
+          pay_day?: number
           phone?: string | null
           role?: string
+          salary?: number
+          salary_paid?: boolean
           shift?: string
           status?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      staff_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          month: string
+          notes: string | null
+          paid_at: string
+          staff_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          month: string
+          notes?: string | null
+          paid_at?: string
+          staff_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          month?: string
+          notes?: string | null
+          paid_at?: string
+          staff_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_payments_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
