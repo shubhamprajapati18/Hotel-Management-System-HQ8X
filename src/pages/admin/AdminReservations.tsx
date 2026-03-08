@@ -213,9 +213,7 @@ export default function AdminReservations() {
                     </td>
                     <td className="py-3 px-4 text-right font-semibold text-primary">{r.amountFormatted}</td>
                     <td className="py-3 px-4">
-                      <Button variant="ghost" size="icon" onClick={() => setSelectedBooking(r.fullId)}>
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </td>
                   </tr>
                 );
