@@ -114,6 +114,47 @@ export default function AdminRooms() {
     onError: () => toast.error("Failed to delete room"),
   });
 
+  const importToDbMutation = useMutation({
+    mutationFn: async (staticRoom: typeof staticRooms[0]) => {
+      const payload = {
+        name: staticRoom.name,
+        category: staticRoom.category,
+        description: staticRoom.description || null,
+        price: staticRoom.price,
+        size: staticRoom.size || null,
+        capacity: staticRoom.capacity,
+        amenities: staticRoom.amenities,
+        image_url: staticRoom.image || null,
+        status: "available",
+      };
+      const { data, error } = await supabase.from("rooms").insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-rooms"] });
+      return data;
+    },
+    onError: () => toast.error("Failed to import room"),
+  });
+
+  const handleEditStatic = async (staticRoom: typeof staticRooms[0]) => {
+    try {
+      const data = await importToDbMutation.mutateAsync(staticRoom);
+      openEdit(data);
+      toast.success("Room imported to database for editing");
+    } catch {}
+  };
+
+  const handleDeleteStatic = async (staticRoom: typeof staticRooms[0]) => {
+    // Import then delete
+    try {
+      const data = await importToDbMutation.mutateAsync(staticRoom);
+      setDeletingRoom({ id: data.id, name: data.name });
+      setDeleteDialogOpen(true);
+    } catch {}
+  };
+
   const openCreate = () => {
     setEditingRoom(null);
     setForm(defaultForm);
@@ -213,7 +254,7 @@ export default function AdminRooms() {
                   <div className="w-full h-full flex items-center justify-center"><ImageIcon className="h-12 w-12 text-muted-foreground/30" /></div>
                 )}
                 <div className="absolute top-3 right-3 flex gap-1.5">
-                  {room.isDb && (
+                  {room.isDb ? (
                     <>
                       <Button variant="secondary" size="icon" className="h-7 w-7" onClick={() => openEdit(room.raw)}>
                         <Edit className="h-3 w-3" />
@@ -222,13 +263,17 @@ export default function AdminRooms() {
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </>
+                  ) : (
+                    <>
+                      <Button variant="secondary" size="icon" className="h-7 w-7" onClick={() => handleEditStatic(staticRooms.find(s => s.id === room.id)!)}>
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button variant="secondary" size="icon" className="h-7 w-7" onClick={() => handleDeleteStatic(staticRooms.find(s => s.id === room.id)!)}>
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </>
                   )}
                 </div>
-                {!room.isDb && (
-                  <div className="absolute top-3 left-3">
-                    <span className="text-[10px] bg-secondary/80 backdrop-blur px-2 py-0.5 rounded text-muted-foreground">Static</span>
-                  </div>
-                )}
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between mb-2">
