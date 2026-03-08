@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronRight, User, Calendar, BedDouble, DollarSign, CreditCard, CheckCircle2, Clock, XCircle, AlertCircle, CalendarIcon, X, Download } from "lucide-react";
 import { exportToCSV } from "@/lib/exportCSV";
+import { AdminManualBooking } from "@/components/AdminManualBooking";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
