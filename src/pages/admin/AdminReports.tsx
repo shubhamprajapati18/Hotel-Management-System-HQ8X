@@ -446,7 +446,7 @@ export default function AdminReports() {
                   </div>
                   <div className="flex justify-between items-center border-b border-border pb-3">
                     <span className="text-sm text-muted-foreground">Monthly Payroll Budget</span>
-                    <span className="text-lg font-bold text-primary">${staff.filter((s: any) => s.status === "Active").reduce((s: number, st: any) => s + Number(st.salary), 0).toLocaleString()}</span>
+                    <span className="text-lg font-bold text-primary">₹{staff.filter((s: any) => s.status === "Active").reduce((s: number, st: any) => s + Number(st.salary), 0).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-border pb-3">
                     <span className="text-sm text-muted-foreground">Total Paid (All Time)</span>
