@@ -181,7 +181,8 @@ export default function AdminReservations() {
                 return (
                   <tr
                     key={r.fullId}
-                    className="border-b border-border/50 hover:bg-secondary/30 transition-colors"
+                    className="border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer"
+                    onClick={() => setSelectedBooking(r.fullId)}
                   >
                     <td className="py-3 px-4 font-mono text-xs text-muted-foreground">{r.id}</td>
                     <td className="py-3 px-4 font-medium text-foreground">{r.guest}</td>
