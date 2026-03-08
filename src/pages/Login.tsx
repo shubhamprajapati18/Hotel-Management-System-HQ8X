@@ -68,7 +68,7 @@ export default function Login() {
                 className="mt-2 bg-secondary/50 border-border h-11 md:h-12 rounded-xl"
               />
             </div>
-            <Button variant="luxury" className="w-full py-6 rounded-xl text-sm tracking-wider uppercase" type="submit">
+            <Button variant="gold" className="w-full py-6 rounded-xl text-sm tracking-wider uppercase" type="submit">
               {isSignUp ? "Create Account" : "Sign In"}
             </Button>
           </form>

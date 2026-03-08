@@ -66,7 +66,7 @@ export default function Rooms() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <img src={room.image} alt={room.name} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                       <div className="absolute top-4 left-4">
-                        <span className="text-[10px] tracking-[0.2em] uppercase font-medium text-primary bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-primary/15">
+                        <span className="text-[10px] tracking-[0.2em] uppercase font-medium text-primary bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-primary/15">
                           {room.category}
                         </span>
                       </div>
