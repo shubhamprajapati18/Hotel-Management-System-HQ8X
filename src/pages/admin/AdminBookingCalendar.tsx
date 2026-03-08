@@ -90,7 +90,9 @@ export default function AdminBookingCalendar() {
             <h1 className="font-heading text-3xl font-bold text-foreground">Booking Calendar</h1>
             <p className="text-muted-foreground text-sm">Visual overview of all reservations</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <AdminManualBooking />
+            <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
