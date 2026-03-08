@@ -80,6 +80,13 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-30 h-14 flex items-center px-6 md:px-8 border-b border-border bg-background/80 backdrop-blur-xl">
           <div className="flex-1" />
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setDark(!dark)}
+              className="h-8 w-8 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-300"
+              aria-label="Toggle theme"
+            >
+              {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-heading font-semibold">A</div>
             {!collapsed && <span className="text-[13px] font-medium text-foreground/70">Admin</span>}
           </div>
