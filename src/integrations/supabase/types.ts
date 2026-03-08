@@ -134,6 +134,54 @@ export type Database = {
         }
         Relationships: []
       }
+      group_reservations: {
+        Row: {
+          check_in: string
+          check_out: string
+          created_at: string
+          group_name: string
+          id: string
+          notes: string | null
+          organizer_email: string
+          organizer_name: string
+          organizer_phone: string | null
+          status: string
+          total_guests: number
+          total_rooms: number
+          updated_at: string
+        }
+        Insert: {
+          check_in: string
+          check_out: string
+          created_at?: string
+          group_name: string
+          id?: string
+          notes?: string | null
+          organizer_email: string
+          organizer_name: string
+          organizer_phone?: string | null
+          status?: string
+          total_guests?: number
+          total_rooms?: number
+          updated_at?: string
+        }
+        Update: {
+          check_in?: string
+          check_out?: string
+          created_at?: string
+          group_name?: string
+          id?: string
+          notes?: string | null
+          organizer_email?: string
+          organizer_name?: string
+          organizer_phone?: string | null
+          status?: string
+          total_guests?: number
+          total_rooms?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -364,6 +412,51 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      waitlist: {
+        Row: {
+          check_in_desired: string
+          check_out_desired: string
+          created_at: string
+          guest_email: string
+          guest_name: string
+          guests: number
+          id: string
+          notes: string | null
+          phone: string | null
+          room_preference: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          check_in_desired: string
+          check_out_desired: string
+          created_at?: string
+          guest_email: string
+          guest_name: string
+          guests?: number
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          room_preference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          check_in_desired?: string
+          check_out_desired?: string
+          created_at?: string
+          guest_email?: string
+          guest_name?: string
+          guests?: number
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          room_preference?: string | null
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
