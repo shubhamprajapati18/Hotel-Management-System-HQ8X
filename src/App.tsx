@@ -40,6 +40,9 @@ import Offers from "./pages/Offers";
 import Contact from "./pages/Contact";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import Payment from "./pages/Payment";
+import BookingConfirmation from "./pages/BookingConfirmation";
+import AdminTestimonials from "./pages/admin/AdminTestimonials";
 
 const queryClient = new QueryClient();
 
