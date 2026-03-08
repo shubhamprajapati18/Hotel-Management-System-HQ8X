@@ -23,7 +23,7 @@ const adr = [
   { month: "Oct", value: 260 }, { month: "Nov", value: 282 }, { month: "Dec", value: 305 },
 ];
 
-const chartStyle = { background: "hsl(240 5% 10%)", border: "1px solid hsl(240 4% 20%)", borderRadius: 8, color: "#F9FAFB" };
+const chartStyle = { background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, color: "hsl(var(--foreground))" };
 
 export default function AdminReports() {
   return (

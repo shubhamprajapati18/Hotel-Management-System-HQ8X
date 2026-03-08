@@ -153,14 +153,14 @@
     box-shadow: 0 12px 40px hsla(240, 10%, 10%, 0.1);
   }
   .kpi-card {
-    background: hsl(0, 0%, 100%);
-    border: 1px solid var(--glass-border);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     @apply rounded-xl p-6;
   }
   .admin-section {
     @apply rounded-xl p-6;
-    background: hsl(0, 0%, 100%);
-    border: 1px solid var(--glass-border);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
   }
 
   /* Elegant underline link animation */
