@@ -23,7 +23,7 @@ const adr = [
   { month: "Oct", value: 260 }, { month: "Nov", value: 282 }, { month: "Dec", value: 305 },
 ];
 
-const chartStyle = { background: "hsl(240 5% 10%)", border: "1px solid hsl(240 4% 20%)", borderRadius: 8, color: "#F9FAFB" };
+const chartStyle = { background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, color: "hsl(var(--foreground))" };
 
 export default function AdminReports() {
   return (
@@ -54,11 +54,11 @@ export default function AdminReports() {
           <h3 className="font-heading text-lg font-semibold text-foreground mb-4">Occupancy Trend</h3>
           <ResponsiveContainer width="100%" height={250}>
             <AreaChart data={occupancyTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 4% 20%)" />
-              <XAxis dataKey="month" stroke="hsl(220 9% 56%)" fontSize={12} />
-              <YAxis stroke="hsl(220 9% 56%)" fontSize={12} tickFormatter={(v) => `${v}%`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${v}%`} />
               <Tooltip contentStyle={chartStyle} />
-              <Area type="monotone" dataKey="rate" fill="hsla(43, 76%, 52%, 0.15)" stroke="hsl(43 76% 52%)" strokeWidth={2} />
+              <Area type="monotone" dataKey="rate" fill="hsla(43, 76%, 52%, 0.15)" stroke="hsl(var(--primary))" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </motion.div>
@@ -67,11 +67,11 @@ export default function AdminReports() {
           <h3 className="font-heading text-lg font-semibold text-foreground mb-4">RevPAR Trend</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={revPAR}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 4% 20%)" />
-              <XAxis dataKey="month" stroke="hsl(220 9% 56%)" fontSize={12} />
-              <YAxis stroke="hsl(220 9% 56%)" fontSize={12} tickFormatter={(v) => `$${v}`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `$${v}`} />
               <Tooltip contentStyle={chartStyle} />
-              <Line type="monotone" dataKey="value" stroke="hsl(142 71% 45%)" strokeWidth={2} dot={{ fill: "hsl(142 71% 45%)" }} />
+              <Line type="monotone" dataKey="value" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ fill: "hsl(var(--accent))" }} />
             </LineChart>
           </ResponsiveContainer>
         </motion.div>
@@ -80,11 +80,11 @@ export default function AdminReports() {
           <h3 className="font-heading text-lg font-semibold text-foreground mb-4">Average Daily Rate (ADR)</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={adr}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 4% 20%)" />
-              <XAxis dataKey="month" stroke="hsl(220 9% 56%)" fontSize={12} />
-              <YAxis stroke="hsl(220 9% 56%)" fontSize={12} tickFormatter={(v) => `$${v}`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `$${v}`} />
               <Tooltip contentStyle={chartStyle} />
-              <Bar dataKey="value" fill="hsl(43 76% 52%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
