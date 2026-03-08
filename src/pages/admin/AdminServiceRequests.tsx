@@ -47,7 +47,23 @@ export default function AdminServiceRequests() {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+
+      // Fetch guest profiles for all unique user_ids
+      const userIds = [...new Set((data || []).map((r: any) => r.user_id))];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, first_name, last_name")
+        .in("user_id", userIds);
+
+      const profileMap: Record<string, { first_name: string | null; last_name: string | null }> = {};
+      (profiles || []).forEach((p: any) => { profileMap[p.user_id] = p; });
+
+      return (data || []).map((r: any) => ({
+        ...r,
+        guest_name: profileMap[r.user_id]
+          ? `${profileMap[r.user_id].first_name || ""} ${profileMap[r.user_id].last_name || ""}`.trim() || "Guest"
+          : "Guest",
+      }));
     },
   });
 
