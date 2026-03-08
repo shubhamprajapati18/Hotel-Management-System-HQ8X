@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToCSV } from "@/lib/exportCSV";
+import { formatINR, formatINRShort } from "@/lib/formatCurrency";
 import { format, parseISO, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, differenceInDays, subDays } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 
