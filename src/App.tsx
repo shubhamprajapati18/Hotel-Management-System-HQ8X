@@ -27,6 +27,7 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import AdminStaff from "./pages/admin/AdminStaff";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminGuests from "./pages/admin/AdminGuests";
+import AdminOffers from "./pages/admin/AdminOffers";
 import Amenities from "./pages/Amenities";
 import Dining from "./pages/Dining";
 import Experiences from "./pages/Experiences";
@@ -78,6 +79,7 @@ const App = () => (
             <Route path="/admin/reports" element={<ProtectedRoute adminOnly><AdminReports /></ProtectedRoute>} />
             <Route path="/admin/staff" element={<ProtectedRoute adminOnly><AdminStaff /></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute adminOnly><AdminSettings /></ProtectedRoute>} />
+            <Route path="/admin/offers" element={<ProtectedRoute adminOnly><AdminOffers /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

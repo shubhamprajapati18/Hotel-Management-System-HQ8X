@@ -1,46 +1,34 @@
 import { GuestNav } from "@/components/GuestNav";
 import { motion } from "framer-motion";
-import { ArrowRight, Calendar, Percent, Gift, Crown } from "lucide-react";
+import { ArrowRight, Calendar, Percent, Gift, Crown, Tag, Loader2 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-const offers = [
-  {
-    icon: Crown,
-    tag: "Exclusive",
-    title: "The Royal Escape",
-    validity: "Valid until June 30, 2026",
-    desc: "Book 3 nights in any Penthouse suite and receive the 4th night complimentary. Includes daily breakfast, spa credit, and airport transfers.",
-    discount: "25% Off",
-  },
-  {
-    icon: Calendar,
-    tag: "Early Bird",
-    title: "Advance Purchase Savings",
-    validity: "Book 30+ days in advance",
-    desc: "Plan ahead and save. Enjoy up to 20% off our best available rates when you book at least 30 days before your arrival.",
-    discount: "20% Off",
-  },
-  {
-    icon: Gift,
-    tag: "Romance",
-    title: "Honeymoon & Anniversary",
-    validity: "Year-round",
-    desc: "Celebrate love with a curated package: champagne on arrival, couples spa treatment, candlelit dinner, and rose petal turndown service.",
-    discount: "Package",
-  },
-  {
-    icon: Percent,
-    tag: "Extended Stay",
-    title: "Stay Longer, Save More",
-    validity: "Minimum 5 nights",
-    desc: "Extended stays are rewarded. Book 5 nights or more and receive 15% off, plus complimentary laundry service and late checkout.",
-    discount: "15% Off",
-  },
-];
+const iconMap: Record<string, React.ElementType> = {
+  Crown,
+  Calendar,
+  Gift,
+  Percent,
+  Tag,
+};
 
 export default function Offers() {
+  const { data: offers = [], isLoading } = useQuery({
+    queryKey: ["guest-offers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("offers")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <GuestNav />
@@ -76,35 +64,48 @@ export default function Offers() {
 
       {/* Offers Grid */}
       <section className="pb-24 md:pb-32 px-6">
-        <div className="container mx-auto max-w-5xl grid sm:grid-cols-2 gap-6 md:gap-8">
-          {offers.map((offer, i) => (
-            <motion.div
-              key={offer.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.6 }}
-              className="rounded-2xl border border-border bg-card p-7 md:p-9 hover-lift flex flex-col"
-            >
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <offer.icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <span className="text-[10px] tracking-[0.15em] uppercase font-medium text-primary">{offer.tag}</span>
-                </div>
-                <span className="font-heading text-xl md:text-2xl font-semibold text-primary">{offer.discount}</span>
-              </div>
-              <h3 className="font-heading text-2xl font-medium text-foreground mb-2 tracking-tight">{offer.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-3 flex-1">{offer.desc}</p>
-              <p className="text-xs text-muted-foreground/60 mb-5">{offer.validity}</p>
-              <Link to="/rooms">
-                <Button variant="gold-outline" size="sm" className="text-xs tracking-wider uppercase w-full sm:w-auto">
-                  Book This Offer <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                </Button>
-              </Link>
-            </motion.div>
-          ))}
+        <div className="container mx-auto max-w-5xl">
+          {isLoading ? (
+            <div className="flex justify-center py-16">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : offers.length === 0 ? (
+            <p className="text-muted-foreground text-center py-16 text-sm">No offers available at the moment. Check back soon!</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-6 md:gap-8">
+              {offers.map((offer, i) => {
+                const IconComp = iconMap[offer.icon] || Gift;
+                return (
+                  <motion.div
+                    key={offer.id}
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08, duration: 0.6 }}
+                    className="rounded-2xl border border-border bg-card p-7 md:p-9 hover-lift flex flex-col"
+                  >
+                    <div className="flex items-center justify-between mb-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
+                          <IconComp className="h-5 w-5 text-primary" />
+                        </div>
+                        <span className="text-[10px] tracking-[0.15em] uppercase font-medium text-primary">{offer.tag}</span>
+                      </div>
+                      <span className="font-heading text-xl md:text-2xl font-semibold text-primary">{offer.discount}</span>
+                    </div>
+                    <h3 className="font-heading text-2xl font-medium text-foreground mb-2 tracking-tight">{offer.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-3 flex-1">{offer.description}</p>
+                    <p className="text-xs text-muted-foreground/60 mb-5">{offer.validity}</p>
+                    <Link to="/rooms">
+                      <Button variant="gold-outline" size="sm" className="text-xs tracking-wider uppercase w-full sm:w-auto">
+                        Book This Offer <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                      </Button>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
