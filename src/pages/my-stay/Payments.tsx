@@ -1,6 +1,7 @@
 import { MyStayLayout } from "@/components/MyStayLayout";
 import { motion } from "framer-motion";
 import { CreditCard, Loader2 } from "lucide-react";
+import { formatINR } from "@/lib/formatCurrency";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
