@@ -122,6 +122,51 @@ export type Database = {
         }
         Relationships: []
       }
+      rooms: {
+        Row: {
+          amenities: string[] | null
+          capacity: number
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price: number
+          size: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amenities?: string[] | null
+          capacity?: number
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price?: number
+          size?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amenities?: string[] | null
+          capacity?: number
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price?: number
+          size?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       service_requests: {
         Row: {
           category: string
