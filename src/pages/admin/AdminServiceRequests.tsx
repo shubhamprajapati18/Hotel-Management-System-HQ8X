@@ -39,6 +39,21 @@ export default function AdminServiceRequests() {
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
 
+  // Real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-service-requests-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "service_requests" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["admin-service-requests"] });
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
+
   const { data: requests = [], isLoading } = useQuery({
     queryKey: ["admin-service-requests"],
     queryFn: async () => {
