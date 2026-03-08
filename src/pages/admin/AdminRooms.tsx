@@ -114,6 +114,47 @@ export default function AdminRooms() {
     onError: () => toast.error("Failed to delete room"),
   });
 
+  const importToDbMutation = useMutation({
+    mutationFn: async (staticRoom: typeof staticRooms[0]) => {
+      const payload = {
+        name: staticRoom.name,
+        category: staticRoom.category,
+        description: staticRoom.description || null,
+        price: staticRoom.price,
+        size: staticRoom.size || null,
+        capacity: staticRoom.capacity,
+        amenities: staticRoom.amenities,
+        image_url: staticRoom.image || null,
+        status: "available",
+      };
+      const { data, error } = await supabase.from("rooms").insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-rooms"] });
+      return data;
+    },
+    onError: () => toast.error("Failed to import room"),
+  });
+
+  const handleEditStatic = async (staticRoom: typeof staticRooms[0]) => {
+    try {
+      const data = await importToDbMutation.mutateAsync(staticRoom);
+      openEdit(data);
+      toast.success("Room imported to database for editing");
+    } catch {}
+  };
+
+  const handleDeleteStatic = async (staticRoom: typeof staticRooms[0]) => {
+    // Import then delete
+    try {
+      const data = await importToDbMutation.mutateAsync(staticRoom);
+      setDeletingRoom({ id: data.id, name: data.name });
+      setDeleteDialogOpen(true);
+    } catch {}
+  };
+
   const openCreate = () => {
     setEditingRoom(null);
     setForm(defaultForm);
